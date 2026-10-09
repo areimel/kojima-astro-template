@@ -1,43 +1,57 @@
----
-import { ArrowLeft } from "lucide-react";
-
+﻿---
 import { Background } from "@/components/background";
-import { Button } from "@/components/ui/button";
-import BasicLayout from "@/layouts/BasicLayout.astro";
+import { buttonVariants } from "@/components/ui/button";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
 ---
 
-<DefaultLayout title="404: Not Found" description="Sorry, the page you're looking for doesn't exist.">
+<DefaultLayout
+  title="404 — Signal not found | Kojima"
+  description="This Kojima page could not be found. Return to the overview or explore the field notes."
+>
   <Background>
-    <div class="container flex min-h-[70vh] flex-col items-center justify-center py-28 text-center lg:min-h-[80vh] lg:py-32">
-      <div class="relative z-10 max-w-2xl">
-        <h1 class="from-foreground to-foreground/70 relative mb-6 bg-linear-to-br bg-clip-text py-2 text-5xl font-bold text-transparent sm:text-6xl lg:text-7xl">
-          Page Not Found
-        </h1>
-
-        <p class="text-muted-foreground mb-10 text-xl">
-          Sorry, we couldn't find the page you're looking for. The page might
-          have been removed or the URL might be incorrect.
-        </p>
-
-        <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <a href="/">
-          <Button size="lg" className="group min-w-[200px] gap-2">
-              <ArrowLeft className="size-5 transition-transform group-hover:-translate-x-1" />
-              Back to Home
-            </Button>
-          </a>
-          <a href="/contact">
-            <Button
-            variant="outline"
-            size="lg"
-            className="min-w-[200px]"
-            >
-              Contact Support
-            </Button>
-           </a>
+    <section class="container max-w-5xl py-12 lg:py-16">
+      <div
+        class="grid border border-border bg-background md:grid-cols-[1fr_2fr]"
+      >
+        <div
+          aria-hidden="true"
+          class="flex min-h-48 flex-col justify-between border-b border-border bg-muted/30 p-8 md:border-r md:border-b-0"
+        >
+          <span
+            class="text-muted-foreground font-mono text-xs uppercase tracking-widest"
+            >Route / Unresolved</span
+          >
+          <span class="font-mono text-8xl tracking-tighter">404</span>
+          <div class="mt-6 grid grid-cols-8 gap-2">
+            {
+              Array.from({ length: 8 }, (_, index) => (
+                <span
+                  class:list={[
+                    "h-2 border border-border",
+                    index < 3 ? "bg-foreground/30" : "bg-background",
+                  ]}
+                />
+              ))
+            }
+          </div>
+        </div>
+        <div class="p-8 md:p-12">
+          <p
+            class="text-muted-foreground mb-6 font-mono text-xs uppercase tracking-widest"
+          >
+            Kojima / Page not found
+          </p>
+          <h1 class="text-4xl tracking-tight md:text-5xl">Signal not found.</h1>
+          <p class="text-muted-foreground mt-6 max-w-lg leading-relaxed">
+            This address does not resolve to a page. Check the URL, return to
+            the overview, or continue through the field notes.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/" data-slot="button" class={buttonVariants({ size: "lg" })}>Return to overview</a>
+            <a href="/blog" data-slot="button" class={buttonVariants({ variant: "outline", size: "lg" })}>Explore field notes</a>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   </Background>
-</DefaultLayout> 
+</DefaultLayout>

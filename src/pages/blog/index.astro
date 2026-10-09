@@ -1,21 +1,22 @@
----
-import { getCollection } from 'astro:content';
+﻿---
+import { getCollection } from "astro:content";
 
-import { Background } from '@/components/background';
-import { BlogPosts } from '@/components/blocks/blog-posts';
-import { SITE_TITLE, SITE_DESCRIPTION } from '@/consts';
-import DefaultLayout from '@/layouts/DefaultLayout.astro';
+import { Background } from "@/components/background";
+import { BlogPosts } from "@/components/blocks/blog-posts";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
-<DefaultLayout title={SITE_TITLE} description={SITE_DESCRIPTION} >
-	<Background>
-		<div class="py-28 lg:pt-44 lg:pb-32">
-			<BlogPosts posts={posts} client:only='react' />
-		</div>
-	</Background>
+<DefaultLayout
+  title="Kojima Field Notes — Signals, context & decisions"
+  description="Synthetic corporate intelligence scenarios exploring geopolitical risk, supply chain exposure, evidence review, and decision briefings."
+>
+  <Background>
+    <div class="py-12 lg:py-16">
+      <BlogPosts posts={posts} />
+    </div>
+  </Background>
 </DefaultLayout>
-

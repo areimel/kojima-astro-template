@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#141310"/>
+  <g stroke="#3f3b31"><path d="M40 74H1160M40 560H1160M660 100V535"/></g>
+  <g font-family="Arial, sans-serif" fill="#efebe0">
+    <text x="40" y="52" font-size="23" font-weight="700">KOJIMA<tspan fill="#ff4d00">.</tspan></text>
+    <text x="40" y="218" font-size="66" font-weight="700" letter-spacing="-3">Read the world.</text>
+    <text x="40" y="295" font-size="66" font-weight="700" letter-spacing="-3" fill="#aaa596">Stay ahead of it.</text>
+    <text x="40" y="378" font-size="21">Intelligence for the decisions that matter.</text>
+  </g>
+  <g font-family="monospace" font-size="12" letter-spacing="2" fill="#aaa596">
+    <text x="215" y="49">PRIVATE INTELLIGENCE SYSTEM</text>
+    <text x="40" y="590">GEOPOLITICAL RISK / CORPORATE INTELLIGENCE</text>
+    <text x="960" y="590">SYSTEM 01 / 2026</text>
+  </g>
+  <rect x="699" y="110" width="461" height="410" fill="#ff4d00"/>
+  <g fill="none" stroke="#141310">
+    <rect x="716" y="127" width="427" height="376"/>
+    <circle cx="929" cy="315" r="148" stroke-width="2"/>
+    <circle cx="929" cy="315" r="112"/>
+    <circle cx="929" cy="315" r="75"/>
+    <circle cx="929" cy="315" r="37"/>
+    <path d="M748 315H1110M929 147V483" stroke-dasharray="3 5"/>
+    <path d="M718 135h14m-7-7v14M1127 135h14m-7-7v14M718 495h14m-7-7v14M1127 495h14m-7-7v14"/>
+  </g>
+  <path d="M929 315L799 244A148 148 0 0 1 982 177Z" fill="#efebe0"/>
+  <g fill="#141310"><circle cx="929" cy="315" r="5"/><circle cx="982" cy="266" r="6"/><circle cx="871" cy="382" r="5"/><circle cx="1019" cy="359" r="4"/></g>
+  <g font-family="monospace" fill="#141310" font-size="11" letter-spacing="2"><text x="741" y="157">KOJIMA / HORIZON SCAN</text><text x="741" y="487">FIG.01 / SYNTHETIC STUDY</text></g>
+</svg>

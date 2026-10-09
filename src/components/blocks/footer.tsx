@@ -1,5 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 
+import { MAIN_NAV } from "@/consts";
+
 export function Footer() {
   return (
     <footer className="bg-background text-foreground border-border mt-20 border-t">
@@ -19,13 +21,7 @@ export function Footer() {
             aria-label="Footer"
             className="flex flex-wrap gap-x-8 gap-y-4 font-mono text-xs"
           >
-            {[
-              ["Overview", "/"],
-              ["Platform", "/components"],
-              ["Intelligence", "/blog"],
-              ["About", "/about"],
-              ["Contact", "/contact"],
-            ].map(([label, href]) => (
+            {MAIN_NAV.map(({ label, href }) => (
               <a
                 key={href}
                 href={href}
@@ -37,6 +33,26 @@ export function Footer() {
             ))}
           </nav>
         </div>
+        <nav
+          aria-label="Resources and account"
+          className="mt-8 flex flex-wrap gap-x-8 gap-y-4 border-t border-border pt-6 font-mono text-xs"
+        >
+          {[
+            ["Pricing", "/pricing"],
+            ["FAQ", "/faq"],
+            ["Sign in", "/login"],
+            ["Register", "/signup"],
+            ["UI kit", "/components"],
+          ].map(([label, href]) => (
+            <a
+              key={href}
+              href={href}
+              className="flex min-h-6 items-center hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
         <a
           href="/"
           aria-label="Kojima home"

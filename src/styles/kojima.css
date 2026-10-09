@@ -124,7 +124,11 @@ html[data-theme="kojima"] [data-slot="button"] {
 }
 
 /* Button does not expose data-variant; use its existing semantic classes. */
-html[data-theme="kojima"] :where([data-slot="button"], [data-slot="badge"]).text-primary {
+html[data-theme="kojima"] .text-primary {
+  color: var(--kojima-accent-ink);
+}
+
+html[data-theme="kojima"] .hover\:text-primary:hover {
   color: var(--kojima-accent-ink);
 }
 

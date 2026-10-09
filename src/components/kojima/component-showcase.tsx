@@ -36,14 +36,14 @@ export function ComponentShowcase() {
 
   return (
     <div className="bg-background text-foreground">
-      <div className="mx-auto max-w-7xl px-4 pt-28 pb-16 sm:px-8 sm:pt-36">
+      <div className="mx-auto max-w-7xl px-4 pt-12 pb-16 sm:px-8 sm:pt-16">
         <header className="border-t border-border pb-12">
           <div className="flex flex-wrap justify-between gap-3 py-5">
             <p className={meta}>Kojima / Component index</p>
             <p className={meta}>11 primitives · 01 shared language</p>
           </div>
           <div className="grid gap-6 pt-8 md:grid-cols-[1.4fr_1fr] md:items-end">
-            <h1 className="max-w-3xl text-5xl leading-[0.98] font-medium tracking-[-0.055em] sm:text-7xl lg:text-8xl">A system.<br /><span className="text-muted-foreground">Not a skin.</span></h1>
+            <h1 className="max-w-3xl text-5xl leading-[0.98] font-medium tracking-[-0.055em] sm:text-7xl lg:text-8xl">One visual language.<br /><span className="text-muted-foreground">Every instrument.</span></h1>
             <div className="max-w-md space-y-5 md:pb-1">
               <p className="text-base leading-relaxed text-muted-foreground">Familiar shadcn primitives. Kojima tokens. A shared visual language for briefings, regions, and sources in a private intelligence workspace.</p>
               <div className="flex flex-wrap gap-2"><Badge variant="outline">shadcn/ui</Badge><Badge variant="secondary">Semantic tokens</Badge><Badge variant="outline">Local demo</Badge></div>
@@ -73,7 +73,7 @@ export function ComponentShowcase() {
               </div>
               <div className="space-y-4">
                 <div className="flex justify-between"><span id="scale-label" className="text-sm font-medium">Mark scale</span><span className={meta}>{settings.scale}%</span></div>
-                <Slider value={[settings.scale]} min={24} max={80} step={4} onValueChange={([value]) => update('scale', value)} ref={(node) => { node?.querySelector('[role="slider"]')?.setAttribute('aria-labelledby', 'scale-label'); }} />
+                <Slider value={[settings.scale]} min={24} max={80} step={4} onValueChange={([value]) => update('scale', value)} aria-labelledby="scale-label" />
                 <p className="text-xs text-muted-foreground">Resize the graphic inside the preview.</p>
               </div>
               <div className="flex flex-wrap gap-2">

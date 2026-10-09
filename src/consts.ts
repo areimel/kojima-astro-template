@@ -36,3 +36,11 @@ export const SITE_METADATA = {
     description: SITE_DESCRIPTION,
   },
 };
+
+export const MAIN_NAV = [
+  { label: "Overview", href: "/" },
+  { label: "Platform", href: "/#platform" },
+  { label: "Intelligence", href: "/blog" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+] as const;

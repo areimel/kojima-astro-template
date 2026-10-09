@@ -5,8 +5,10 @@ import {
   Layers,
   Radio,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 import { InstrumentGraphic } from "./instrument-graphic";
+
+import { Button } from "@/components/ui/button";
 
 const capabilities = [
   {

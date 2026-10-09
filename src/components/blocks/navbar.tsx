@@ -3,25 +3,29 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
+import { MAIN_NAV } from "@/consts";
 
-const links = [
-  { label: "Overview", href: "/" },
-  { label: "Platform", href: "/components" },
-  { label: "Intelligence", href: "/blog" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
 const focus =
   "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring";
 
 export function Navbar({ pathname = "/" }: { pathname?: string }) {
   const [open, setOpen] = useState(false);
+  const [hash, setHash] = useState("");
   const trigger = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
   const active = (href: string) =>
     href === "/"
-      ? pathname === "/"
-      : pathname === href || pathname.startsWith(`${href}/`);
+      ? pathname === "/" && hash !== "#platform"
+      : href === "/#platform"
+        ? pathname === "/" && hash === "#platform"
+        : pathname === href || pathname.startsWith(`${href}/`);
+
+  useEffect(() => {
+    const syncHash = () => setHash(window.location.hash);
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, []);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -72,11 +76,17 @@ export function Navbar({ pathname = "/" }: { pathname?: string }) {
         </a>
         <nav aria-label="Primary" className="hidden lg:block">
           <ul className="flex items-center gap-6">
-            {links.map(({ label, href }) => (
+            {MAIN_NAV.map(({ label, href }) => (
               <li key={href}>
                 <a
                   href={href}
-                  aria-current={active(href) ? "page" : undefined}
+                  aria-current={
+                    active(href)
+                      ? href.includes("#")
+                        ? "location"
+                        : "page"
+                      : undefined
+                  }
                   className={`hover:text-primary font-mono text-xs transition-colors ${active(href) ? "text-foreground" : "text-muted-foreground"} ${focus}`}
                 >
                   {label}
@@ -118,11 +128,17 @@ export function Navbar({ pathname = "/" }: { pathname?: string }) {
         className="border-border border-t px-5 py-4 lg:hidden"
       >
         <ul className="divide-border divide-y">
-          {links.map(({ label, href }) => (
+          {MAIN_NAV.map(({ label, href }) => (
             <li key={href}>
               <a
                 href={href}
-                aria-current={active(href) ? "page" : undefined}
+                aria-current={
+                  active(href)
+                    ? href.includes("#")
+                      ? "location"
+                      : "page"
+                    : undefined
+                }
                 onClick={() => setOpen(false)}
                 className={`hover:text-primary flex min-h-12 items-center justify-between font-mono text-sm ${focus}`}
               >

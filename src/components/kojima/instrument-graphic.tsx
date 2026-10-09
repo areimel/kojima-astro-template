@@ -348,12 +348,9 @@ export function InstrumentGraphic({
         x="30"
         y="578"
         fill={colors.ink}
-        fontFamily="Impact, 'Arial Black', sans-serif"
-        fontSize="111"
+        fontFamily="'Arial Black', Arial, sans-serif"
+        fontSize="100"
         fontWeight="900"
-        letterSpacing="-6"
-        textLength="532"
-        lengthAdjust="spacingAndGlyphs"
       >
         {variant === "wave" ? "SIGNAL" : "KOJIMA"}
       </text>

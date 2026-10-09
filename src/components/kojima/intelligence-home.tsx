@@ -1,5 +1,5 @@
-import { IntelligenceSections } from "./intelligence-sections";
 import { useRef, useState } from "react";
+
 import {
   ArrowDown,
   ArrowUpRight,
@@ -7,12 +7,16 @@ import {
   Download,
   RefreshCw,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+
 import {
   InstrumentGraphic,
   type InstrumentGraphicProps,
 } from "./instrument-graphic";
+import { IntelligenceSections } from "./intelligence-sections";
+
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+
 
 const instruments = [
   {

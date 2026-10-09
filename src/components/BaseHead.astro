@@ -15,7 +15,7 @@ const finalTitle = !title
 const finalDescription = description || SITE_METADATA.description;
 const siteURL = Astro.site || Astro.url.origin;
 const canonicalURL = new URL(Astro.url.pathname, siteURL);
-const imageURL = image ? new URL(image, siteURL) : undefined;
+const imageURL = new URL(image || "/og-image.png", siteURL);
 ---
 
 <meta charset="utf-8" />
@@ -43,12 +43,6 @@ const imageURL = image ? new URL(image, siteURL) : undefined;
     });
   })();
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800;900&display=swap"
-  rel="stylesheet"
-/>
 <link
   rel="preload"
   href="/fonts/dm-sans/DMSans-Regular.ttf"
