@@ -1,52 +1,46 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export const AboutSection = () => {
-  return (
-    <section className="container mt-10 flex max-w-5xl flex-col-reverse gap-8 md:mt-14 md:gap-14 lg:mt-20 lg:flex-row lg:items-end">
-      {/* Images Left - Text Right */}
-      <div className="flex flex-col gap-8 lg:gap-16 xl:gap-20">
-        <ImageSection
-          images={[
-            { src: "/about/1.webp", alt: "Team collaboration" },
-            { src: "/about/2.webp", alt: "Team workspace" },
-          ]}
-          className="xl:-translate-x-10"
-        />
-
-        <TextSection
-          title="The team"
-          paragraphs={[
-            "We started building Mainline in 2019 and launched in 2022. Every endpoint has been designed from the ground up — with no technical debt or legacy systems. We are purpose-built to power project management innovation for the next hundred years.",
-            "We are 100% founder and team-owned, profitable, and we keep our team lean. Over time, this page will become more polished, but for now, we're focused on delivering for developers.",
-            "If you're interested in building the future of PM, check out our open roles below.",
-          ]}
-          ctaButton={{
-            href: "/careers",
-            text: "View open roles",
-          }}
-        />
+export const AboutSection = () => (
+  <section className="container mt-16 grid max-w-5xl gap-10 lg:mt-24 lg:grid-cols-2 lg:items-center">
+    <figure className="border-border bg-background border p-6 md:p-8">
+      <figcaption className="text-muted-foreground mb-8 font-mono text-xs tracking-widest uppercase">
+        Fig. 01 / Synthetic dependency model
+      </figcaption>
+      <div className="grid grid-cols-2 gap-3">
+        {["Port notice", "Supplier update"].map((label) => (
+          <div
+            key={label}
+            className="border-border bg-muted/30 border p-4 text-center font-mono text-xs"
+          >
+            {label}
+          </div>
+        ))}
       </div>
-
-      {/* Text Left - Images Right */}
-      <div className="flex flex-col gap-8 lg:gap-16 xl:gap-20">
-        <TextSection
-          paragraphs={[
-            "At Mainline, we are dedicated to transforming the way teams plan, execute, and deliver projects. Our mission is to provide our customers with an unbeatable edge over delays, inefficiencies, and disorganisation through actionable insights and seamless collaboration. We'll stop at nothing to give you the tools you need to get every project across the finish line.",
-            "We're customer-obsessed — investing the time to understand every aspect of your workflow so that we can help you operate better than ever before. We're all in this together because your success is our success. In our history as a company, we've never lost a customer, because when your projects succeed, so do we.",
-          ]}
-        />
-        <ImageSection
-          images={[
-            { src: "/about/3.webp", alt: "Modern workspace" },
-            { src: "/about/4.webp", alt: "Team collaboration" },
-          ]}
-          className="hidden lg:flex xl:translate-x-10"
-        />
+      <div aria-hidden="true" className="bg-border mx-auto h-8 w-px" />
+      <div className="border-border border p-5 text-center font-mono text-sm">
+        Shared logistics corridor
       </div>
-    </section>
-  );
-};
+      <div aria-hidden="true" className="bg-border mx-auto h-8 w-px" />
+      <div className="border-border bg-muted/30 border p-5 text-center font-mono text-sm">
+        Delivery exposure / Analyst review
+      </div>
+      <p className="text-muted-foreground mt-6 text-sm leading-relaxed">
+        Illustrative relationships guide a question for review. A connection
+        alone does not establish cause or confirm disruption.
+      </p>
+    </figure>
+    <TextSection
+      title="From signals to a working picture."
+      paragraphs={[
+        "A port advisory, a supplier update, and a regional development may arrive separately. The Kojima concept places them alongside the business dependencies that make them relevant.",
+        "The intended workflow keeps observations, assessments, and open questions visible. Teams can explore how a briefing might explain what changed, where exposure sits, and what evidence would justify a response.",
+        "All examples here are synthetic. Data connections, automated analysis, and operational workflows would require a separate production implementation.",
+      ]}
+      ctaButton={{ href: "/blog", text: "Explore the field notes" }}
+    />
+  </section>
+);
 
 interface ImageSectionProps {
   images: { src: string; alt: string }[];
@@ -59,11 +53,12 @@ export function ImageSection({ images, className }: ImageSectionProps) {
       {images.map((image, index) => (
         <div
           key={index}
-          className="relative aspect-[2/1.5] overflow-hidden rounded-2xl"
+          className="border-border relative aspect-[4/3] overflow-hidden border"
         >
           <img
             src={image.src}
             alt={image.alt}
+            loading="lazy"
             className="size-full object-cover"
           />
         </div>
@@ -75,10 +70,7 @@ export function ImageSection({ images, className }: ImageSectionProps) {
 interface TextSectionProps {
   title?: string;
   paragraphs: string[];
-  ctaButton?: {
-    href: string;
-    text: string;
-  };
+  ctaButton?: { href: string; text: string };
 }
 
 export function TextSection({
@@ -87,19 +79,26 @@ export function TextSection({
   ctaButton,
 }: TextSectionProps) {
   return (
-    <div className="flex-1 space-y-4 text-lg font-medium md:space-y-6">
-      {title && <h2 className="text-primary text-4xl font-medium">{title}</h2>}
-      <div className="text-muted-foreground max-w-xl space-y-6">
+    <div className="flex-1 space-y-6">
+      {title && (
+        <h2 className="text-foreground text-3xl tracking-tight md:text-4xl">
+          {title}
+        </h2>
+      )}
+      <div className="text-muted-foreground max-w-xl space-y-6 leading-relaxed">
         {paragraphs.map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
         ))}
       </div>
       {ctaButton && (
-        <div className="mt-8">
-          <a href={ctaButton.href}>
-            <Button size="lg">{ctaButton.text}</Button>
-          </a>
-        </div>
+        <Button
+          asChild
+          variant="outline"
+          size="lg"
+          className="rounded-none font-mono text-xs"
+        >
+          <a href={ctaButton.href}>{ctaButton.text}</a>
+        </Button>
       )}
     </div>
   );

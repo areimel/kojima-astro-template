@@ -1,69 +1,56 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+﻿import type { CollectionEntry } from "astro:content";
+import { format } from "date-fns";
 
-const BlogPosts = ({ posts }: { posts: any[] }) => {
-  return (
-    <>
-      <section>
-        <div className="container max-w-5xl space-y-4 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
-            Blog
-          </h1>
-
-          <p className="text-muted-foreground max-w-md leading-snug font-medium lg:mx-auto">
-            Explore our blog for insightful articles, personal reflections and
-            more.
-          </p>
-        </div>
-      </section>
-      <section className="container flex max-w-5xl flex-col-reverse gap-8 md:gap-14 lg:flex-row lg:items-end">
-        <div className="container">
-          <div className="mt-20 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
-              <a
-                key={post.id}
-                className="rounded-xl border"
-                href={`/blog/${post.id}/`}
-              >
-                <div className="p-2">
-                  <img
-                    src={post.data.image}
-                    alt="placeholder"
-                    className="aspect-video w-full rounded-lg object-cover"
-                  />
-                </div>
-                <div className="px-3 pt-2 pb-4">
-                  <h2 className="mb-1 font-semibold">{post.data.title}</h2>
-                  <p className="text-muted-foreground line-clamp-2 text-sm">
-                    {post.data.description}
-                  </p>
-                  <Separator className="my-5" />
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="ring-input size-7 rounded-full ring-1">
-                        <AvatarImage
-                          src={post.data.authorImage}
-                          alt="placeholder"
-                        />
-                        <AvatarFallback>CN</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm font-medium">
-                        {post.data.authorName}
-                      </span>
-                    </div>
-                    <Badge variant="secondary" className="h-fit">
-                      10 Min Read
-                    </Badge>
-                  </div>
-                </div>
-              </a>
-            ))}
+const BlogPosts = ({ posts }: { posts: CollectionEntry<"blog">[] }) => (
+  <section className="container max-w-5xl">
+    <div className="max-w-2xl space-y-5">
+      <p className="text-muted-foreground font-mono text-xs tracking-widest uppercase">
+        Kojima / Field notes
+      </p>
+      <h1 className="text-4xl tracking-tight md:text-5xl">
+        Signals. Context. Decisions.
+      </h1>
+      <p className="text-muted-foreground leading-relaxed">
+        Working notes on corporate intelligence, geopolitical risk, and supply
+        chain exposure. All scenarios are synthetic demonstrations.
+      </p>
+    </div>
+    <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post, index) => (
+        <a
+          key={post.id}
+          href={`/blog/${post.id}/`}
+          className="group border-border bg-background hover:bg-muted/40 focus-visible:outline-ring flex min-w-0 flex-col border transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
+        >
+          <div className="text-muted-foreground border-border flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4 font-mono text-xs">
+            <span>NOTE / {String(index + 1).padStart(2, "0")}</span>
+            <time dateTime={new Date(post.data.pubDate).toISOString()}>
+              {format(post.data.pubDate, "yyyy.MM.dd")}
+            </time>
           </div>
-        </div>
-      </section>
-    </>
-  );
-};
+          <div className="flex flex-1 flex-col p-5">
+            <h2 className="text-xl leading-snug tracking-tight group-hover:underline group-hover:underline-offset-4">
+              {post.data.title}
+            </h2>
+            <p className="text-muted-foreground mt-4 line-clamp-3 text-sm leading-relaxed">
+              {post.data.description}
+            </p>
+            <div className="text-muted-foreground mt-auto flex flex-wrap items-center justify-between gap-3 pt-8 font-mono text-xs">
+              <span>{post.data.authorName || "Kojima demo"}</span>
+              <span className="text-foreground">
+                Read note <span aria-hidden="true">↗</span>
+              </span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+    {posts.length === 0 && (
+      <p className="text-muted-foreground border-border mt-10 border-t pt-6 font-mono text-sm">
+        No field notes published yet.
+      </p>
+    )}
+  </section>
+);
 
 export { BlogPosts };

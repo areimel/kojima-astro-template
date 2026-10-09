@@ -1,33 +1,42 @@
----
-title: "Using MDX"
-description: "MDX is a special flavor of Markdown that supports embedded JavaScript & JSX syntax"
+﻿---
+title: "Build a useful synthetic monitoring exercise"
+description: "Define a business question, fictional evidence, and review conditions before evaluating an intelligence interface."
 pubDate: "Jun 01 2024"
-image: "https://images.unsplash.com/photo-1737386385296-f3e58b8cf21d?q=80&w=1286&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-authorImage: "/avatar/avatar2.png"
-authorName: "Jane Doe"
+authorName: "Kojima demo journal"
 ---
 
-This theme comes with the [@astrojs/mdx](https://docs.astro.build/en/guides/integrations-guide/mdx/) integration installed and configured in your `astro.config.mjs` config file. If you prefer not to use MDX, you can disable support by removing the integration from your config file.
+A synthetic exercise can reveal whether an intelligence interface helps a team reason clearly. It needs a decision to support, a small evidence set, and enough ambiguity to test the review process.
 
-## Why MDX?
+This note describes a fictional Kojima walkthrough. It does not describe a deployed monitoring service.
 
-MDX is a special flavor of Markdown that supports embedded JavaScript & JSX syntax. This unlocks the ability to [mix JavaScript and UI Components into your Markdown content](https://docs.astro.build/en/guides/markdown-content/#mdx-features) for things like interactive charts or alerts.
+## Define the decision boundary
 
-If you have existing content authored in MDX, this integration will hopefully make migrating to Astro a breeze.
+Use a specific question: “Should the sample team request an alternate route review for a component delivery?”
 
-## Example
+Choose a fictional supplier, corridor, and delivery window. Avoid adding real customers, personal information, or confidential business records to the demo.
 
-Here is how you import and use a UI component inside of MDX.  
-When you open this page in the browser, you should see the clickable button below.
+## Prepare three kinds of evidence
 
-import HeaderLink from "@/components/header-link";
+- An initial notice that suggests a possible change.
+- A dependency record that might connect the change to the business.
+- A later update that either supports or weakens that connection.
 
-<HeaderLink href="#" onclick="alert('clicked!')">
-  Embedded component in MDX
-</HeaderLink>
+Give each record a stable synthetic identifier. Record event time separately from the time it becomes available in the exercise.
 
-## More Links
+## Include a competing explanation
 
-- [MDX Syntax Documentation](https://mdxjs.com/docs/what-is-mdx)
-- [Astro Usage Documentation](https://docs.astro.build/en/guides/markdown-content/#markdown-and-mdx-pages)
-- **Note:** [Client Directives](https://docs.astro.build/en/reference/directives-reference/#client-directives) are still required to create interactive components. Otherwise, all components in your MDX will render as static HTML (no JavaScript) by default.
+A supplier delay might result from an internal scheduling change rather than the regional event. Introduce a fictional update that raises that possibility.
+
+The exercise should make it possible to preserve two explanations until evidence distinguishes them. A visually compelling relationship diagram should not force an early conclusion.
+
+## Evaluate the handoff
+
+Ask a second reviewer to identify the observation, the inferred impact, the missing evidence, and the next action using only the sample brief.
+
+If those answers require an oral explanation, revise the briefing content or hierarchy. The aim is inspectable reasoning, not the number of alerts or panels on screen.
+
+## State the implementation boundary
+
+Kojima supplies an interface template and editorial examples. A production service would need separately implemented data ingestion, identity and authorization, source governance, review workflows, and operational testing.
+
+Successful completion of this exercise demonstrates that a sample narrative is understandable. It does not establish analytical accuracy, security readiness, or production capability.
