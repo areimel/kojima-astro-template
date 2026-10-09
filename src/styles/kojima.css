@@ -137,6 +137,10 @@ html[data-theme="kojima"] [data-slot="button"].bg-destructive {
   color: var(--destructive-foreground);
 }
 
+html[data-theme="kojima"] [data-slot="switch-thumb"][data-state="checked"] {
+  background: var(--primary-foreground);
+}
+
 html[data-theme="kojima"] :where([data-slot="card"], .technical-panel) {
   border: 1px solid var(--border);
   background: var(--card);

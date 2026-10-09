@@ -25,3 +25,7 @@ pnpm-debug.log*
 
 # vercel
 .vercel
+
+# browser verification artifacts
+test-results/
+playwright-report/

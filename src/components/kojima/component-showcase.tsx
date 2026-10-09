@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +24,8 @@ function PanelHeading({ number, title, detail }: { number: string; title: string
 }
 
 export function ComponentShowcase() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [settings, setSettings] = useState(defaults);
   const [snapshot, setSnapshot] = useState(defaults);
   const [status, setStatus] = useState('Ready. Adjust the sample briefing preview.');
@@ -54,7 +56,7 @@ export function ComponentShowcase() {
         <div className="grid border border-border lg:grid-cols-[0.85fr_1.15fr]">
           <section className="min-w-0 border-b border-border lg:border-r lg:border-b-0" aria-label="Preview controls">
             <PanelHeading number="01" title="Controls" detail="Shape the briefing" />
-            <div className="space-y-7 p-5 sm:p-7">
+            <fieldset disabled={!ready} className="space-y-7 p-5 sm:p-7">
               <div className="space-y-2">
                 <label htmlFor="specimen-title" className="text-sm font-medium">Briefing title</label>
                 <Input id="specimen-title" value={settings.title} maxLength={60} onChange={(event) => update('title', event.target.value)} aria-describedby="title-hint" />
@@ -93,7 +95,7 @@ export function ComponentShowcase() {
                 <Button variant="ghost" disabled={!dirty} onClick={() => { setSettings({ ...snapshot }); setStatus('Restored the last applied snapshot.'); }}>Restore snapshot</Button>
               </div>
               <p role="status" aria-live="polite" className="min-h-10 text-xs leading-relaxed text-muted-foreground">{status}</p>
-            </div>
+            </fieldset>
           </section>
 
           <section className="min-w-0 bg-muted/20" aria-label="Sample briefing preview">
