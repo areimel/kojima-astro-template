@@ -1,0 +1,285 @@
+/* Opt in with <html data-theme="kojima">; the shell owns the .dark toggle.
+   Unlayered skin rules intentionally override shadcn's utility defaults. */
+html[data-theme="kojima"] {
+  color-scheme: light;
+  --background: #efebe0;
+  --foreground: #141310;
+  --card: #f8f5ed;
+  --card-foreground: var(--foreground);
+  --popover: #f8f5ed;
+  --popover-foreground: var(--foreground);
+  --primary: #ff4d00;
+  --primary-foreground: #141310;
+  --secondary: #e1dccf;
+  --secondary-foreground: var(--foreground);
+  --muted: #e1dccf;
+  --muted-foreground: #625e53;
+  --accent: #dad4c5;
+  --accent-foreground: var(--foreground);
+  --destructive: #ad2921;
+  --destructive-foreground: #ffffff;
+  --border: #c4beaf;
+  --input: #817b6c;
+  --ring: #b83200;
+  --chart-1: #b83200;
+  --chart-2: #52664b;
+  --chart-3: #3e6674;
+  --chart-4: #806222;
+  --chart-5: #775870;
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  --kojima-orange: #ff4d00;
+  --kojima-accent-ink: #b83200;
+  --radius: 0px;
+  --shadow-2xs: 0 0 #0000;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --shadow: 0 0 #0000;
+  --shadow-md: 0 0 #0000;
+  --shadow-lg: 0 0 #0000;
+  --shadow-xl: 0 0 #0000;
+  --shadow-2xl: 0 0 #0000;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --display-family: var(--font-sans);
+  --text-family: var(--font-sans);
+  --display-weight: 700;
+  --text-weight: 400;
+}
+
+html[data-theme="kojima"].dark {
+  color-scheme: dark;
+  --background: #141310;
+  --foreground: #efebe0;
+  --card: #1c1b17;
+  --popover: #1c1b17;
+  --secondary: #292720;
+  --muted: #292720;
+  --muted-foreground: #aaa596;
+  --accent: #363229;
+  --destructive: #b52d24;
+  --border: #3f3b31;
+  --input: #827b6b;
+  --ring: #ff4d00;
+  --chart-1: #ff4d00;
+  --chart-2: #a4b58a;
+  --chart-3: #8eafb9;
+  --chart-4: #d8b971;
+  --chart-5: #c3a0b7;
+  --kojima-accent-ink: #ff4d00;
+}
+
+html[data-theme="kojima"] body {
+  font-family: var(--text-family);
+  line-height: 1.6;
+}
+
+html[data-theme="kojima"] ::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+html[data-theme="kojima"] :where(h1, h2, h3, h4, [data-slot="card-title"], .section-heading) {
+  font-family: var(--display-family);
+  font-weight: var(--display-weight);
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+html[data-theme="kojima"] :where(
+  [data-slot="button"], [data-slot="badge"], [data-slot="label"],
+  [data-slot="tabs-trigger"], [data-slot="table-head"], .kicker, .technical-label
+) {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+html[data-theme="kojima"] :where(
+  [data-slot="button"], [data-slot="badge"], [data-slot="card"],
+  [data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"],
+  [data-slot="tabs-list"], [data-slot="tabs-trigger"], [data-slot="checkbox"],
+  [data-slot="toggle"], [data-slot="input-group"], [data-slot="input-otp-slot"],
+  [data-slot="dialog-content"], [data-slot="alert-dialog-content"],
+  [data-slot="popover-content"], [data-slot="hover-card-content"],
+  [data-slot="select-content"], [data-slot="dropdown-menu-content"],
+  [data-slot="context-menu-content"], [data-slot="tooltip-content"],
+  [data-slot="alert"], [data-slot="progress"], [data-slot="slider-track"],
+  [data-slot="slider-range"], [data-slot="slider-thumb"]
+) {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+html[data-theme="kojima"] [data-slot="button"] {
+  transition-property: background-color, color, border-color;
+  transition-duration: 150ms;
+}
+
+/* Button does not expose data-variant; use its existing semantic classes. */
+html[data-theme="kojima"] :where([data-slot="button"], [data-slot="badge"]).text-primary {
+  color: var(--kojima-accent-ink);
+}
+
+html[data-theme="kojima"] [data-slot="button"].bg-destructive {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+html[data-theme="kojima"] :where([data-slot="card"], .technical-panel) {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--card-foreground);
+}
+
+html[data-theme="kojima"] :where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"]) {
+  border-color: var(--input);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--text-family);
+}
+
+html[data-theme="kojima"] :where(input, textarea)::placeholder {
+  color: var(--muted-foreground);
+  opacity: 1;
+}
+
+html[data-theme="kojima"] [data-slot="tabs-list"] {
+  height: auto;
+  max-width: 100%;
+  justify-content: flex-start;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  padding: 0;
+}
+
+html[data-theme="kojima"] [data-slot="tabs-trigger"] {
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+html[data-theme="kojima"] [data-slot="tabs-trigger"][data-state="active"] {
+  border-color: var(--primary);
+  background: var(--card);
+  color: var(--foreground);
+}
+
+html[data-theme="kojima"] :where([data-slot="accordion-item"], [data-slot="table-row"]) {
+  border-color: var(--border);
+}
+
+html[data-theme="kojima"] [data-slot="table-head"] {
+  color: var(--muted-foreground);
+}
+
+html[data-theme="kojima"] [data-slot="accordion-trigger"] {
+  font-family: var(--display-family);
+  font-weight: 700;
+}
+
+html[data-theme="kojima"] :where([data-slot="separator"], [data-slot="dropdown-menu-separator"]) {
+  background: var(--border);
+}
+
+html[data-theme="kojima"] :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+html[data-theme="kojima"] :where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"])[aria-invalid="true"] {
+  border-color: var(--destructive);
+  outline-color: var(--destructive);
+}
+
+html[data-theme="kojima"] :where(button, [role="button"]):disabled {
+  cursor: not-allowed;
+}
+
+html[data-theme="kojima"] .kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+
+html[data-theme="kojima"] .kicker::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  background: var(--kojima-orange);
+}
+
+html[data-theme="kojima"] .technical-panel {
+  position: relative;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+html[data-theme="kojima"] .section-heading {
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 1.05;
+}
+
+html[data-theme="kojima"] .technical-label {
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+
+/* Decorative only: use aria-hidden="true" on the empty mark element. */
+html[data-theme="kojima"] .registration-mark {
+  position: relative;
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+html[data-theme="kojima"] .registration-mark::before,
+html[data-theme="kojima"] .registration-mark::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+}
+
+html[data-theme="kojima"] .registration-mark::before {
+  inset: calc(50% - 0.5px) 0 auto;
+  height: 1px;
+}
+
+html[data-theme="kojima"] .registration-mark::after {
+  inset: 0 auto 0 calc(50% - 0.5px);
+  width: 1px;
+}
+
+html[data-theme="kojima"] .technical-grid {
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="kojima"],
+  html[data-theme="kojima"] body {
+    scroll-behavior: auto;
+  }
+
+  html[data-theme="kojima"] :where([data-slot="button"], [data-slot="tabs-trigger"]) {
+    transition: none;
+  }
+}
