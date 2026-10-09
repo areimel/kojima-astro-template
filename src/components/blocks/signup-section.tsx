@@ -1,61 +1,127 @@
-import React from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
-import { FcGoogle } from "react-icons/fc";
-
-import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader } from "../ui/card";
-import { Input } from "../ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const SignupSection = () => {
+  const [ready, setReady] = useState(false);
+  const [status, setStatus] = useState("");
+  useEffect(() => setReady(true), []);
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const name = form.querySelector<HTMLInputElement>("#demo-name");
+    if (!name?.value.trim()) {
+      setStatus("Enter a name containing more than spaces.");
+      name?.focus();
+      return;
+    }
+    form.reset();
+    setStatus(
+      "Demo validation complete. No account was created and no request was sent. The form has been cleared; no credentials were sent or saved.",
+    );
+  }
   return (
-    <section className="py-28 lg:pt-44 lg:pb-32">
-      <div className="container">
-        <div className="flex flex-col gap-4">
-          <Card className="mx-auto w-full max-w-sm">
-            <CardHeader className="flex flex-col items-center space-y-0">
-              <img
-                src="/logo.svg"
-                alt="logo"
-                width={94}
-                height={18}
-                className="mb-7 dark:invert"
-              />
-              <p className="mb-2 text-2xl font-bold">Start your free trial</p>
-              <p className="text-muted-foreground">
-                Sign up in less than 2 minutes.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4">
-                <Input type="text" placeholder="Enter your name" required />
-                <Input type="email" placeholder="Enter your email" required />
-                <div>
-                  <Input
-                    type="password"
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <p className="text-muted-foreground mt-1 text-sm">
-                    Must be at least 8 characters.
-                  </p>
-                </div>
-                <Button type="submit" className="mt-2 w-full">
-                  Create an account
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <FcGoogle className="mr-2 size-5" />
-                  Sign up with Google
-                </Button>
-              </div>
-              <div className="text-muted-foreground mx-auto mt-8 flex justify-center gap-1 text-sm">
-                <p>Already have an account?</p>
-                <a href="/login" className="text-primary font-medium">
-                  Log in
-                </a>
-              </div>
-            </CardContent>
-          </Card>
+    <section className="py-24 lg:pt-40 lg:pb-28">
+      <div className="container grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
+        <div>
+          <p className="kicker mb-6">Kojima / Access protocol</p>
+          <h1 className="section-heading">Give your team a clearer picture.</h1>
+          <p className="text-muted-foreground mt-6 max-w-lg text-lg">
+            Explore a workspace concept for corporate intelligence and
+            geopolitical risk teams, from regional monitoring to executive
+            briefings.
+          </p>
+          <div className="technical-panel mt-10">
+            <p className="technical-label mb-3">
+              Environment / Demonstration only
+            </p>
+            <p className="text-muted-foreground text-sm">
+              This interface has no account service or backend. Use a sample
+              email and a made-up password. Credentials are not sent or stored
+              by this demo.
+            </p>
+          </div>
+          <Button asChild variant="outline" className="mt-6">
+            <a href="/contact">Prepare an access inquiry</a>
+          </Button>
         </div>
+        <Card className="rounded-none shadow-none">
+          <CardHeader>
+            <p className="technical-label">Local form / Registration</p>
+            <h2 className="text-2xl">Preview registration.</h2>
+            <p className="text-muted-foreground text-sm">
+              Checks form validity only. No account will be created.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <form
+              onSubmit={submit}
+              onChange={() => setStatus("")}
+              autoComplete="off"
+              className="space-y-5"
+            >
+              <div className="space-y-2">
+                <Label htmlFor="demo-name">Sample name</Label>
+                <Input
+                  id="demo-name"
+                  required
+                  maxLength={120}
+                  autoComplete="off"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="demo-email">Sample work email</Label>
+                <Input
+                  id="demo-email"
+                  type="email"
+                  required
+                  maxLength={254}
+                  autoComplete="off"
+                  placeholder="analyst@example.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="demo-password">Demo password</Label>
+                <Input
+                  id="demo-password"
+                  type="password"
+                  required
+                  minLength={8}
+                  maxLength={128}
+                  autoComplete="new-password"
+                  aria-describedby="password-help"
+                />
+                <p id="password-help" className="text-muted-foreground text-xs">
+                  Use 8–128 characters. Do not use a real password.
+                </p>
+              </div>
+              <Button type="submit" disabled={!ready} className="w-full">
+                Validate demo registration
+              </Button>
+              <p role="status" className="text-muted-foreground text-sm">
+                {status}
+              </p>
+              <noscript>
+                <p>
+                  Enable JavaScript for local form validation. No account
+                  service is connected.
+                </p>
+              </noscript>
+            </form>
+            <p className="text-muted-foreground mt-6 border-t pt-6 text-sm">
+              Explore the entry flow.{" "}
+              <a
+                href="/login"
+                className="text-foreground underline underline-offset-4"
+              >
+                Demo sign-in
+              </a>
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

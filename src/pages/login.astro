@@ -1,13 +1,11 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-
-import { Background } from '@/components/background';
-import LoginSection from '@/components/blocks/login-section';
-import DefaultLayout from '@/layouts/DefaultLayout.astro';
+import LoginSection from "@/components/blocks/login-section";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
 ---
 
-<DefaultLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <Background>
-    <LoginSection />
-  </Background>
+<DefaultLayout
+  title="Demo sign-in | Kojima"
+  description="Explore Kojima's private-intelligence demo for corporate intelligence and geopolitical risk teams. Demo sign-in; no live service is connected."
+>
+  <LoginSection client:load />
 </DefaultLayout>

@@ -1,134 +1,155 @@
-"use client";
-
 import { useState } from "react";
 
 import { Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
 const plans = [
   {
-    name: "Free",
-    monthlyPrice: "$0",
-    yearlyPrice: "$0",
-    description: "Free for everyone",
+    name: "Observer",
+    monthly: 40,
+    annualMonthly: 32,
+    description: "A focused desk for regional research.",
     features: [
-      "Unlimited members",
-      "2 teams",
-      "500 issues",
-      "Slack and Github integrations",
+      "5 monitoring topics",
+      "1 research workspace",
+      "Weekly briefing concept",
     ],
   },
   {
-    name: "Startup",
-    monthlyPrice: "$8",
-    yearlyPrice: "$6",
+    name: "Analyst",
+    monthly: 100,
+    annualMonthly: 80,
+    description: "A shared picture for corporate intelligence teams.",
     features: [
-      "All free plan features and...",
-      "Mainline AI",
-      "Unlimited teams",
-      "Unlimited issues and file uploads",
-      "Mainline Insights",
-      "Admin roles",
+      "25 monitoring topics",
+      "5 research workspaces",
+      "Daily briefing concept",
     ],
   },
   {
-    name: "Enterprise",
-    monthlyPrice: "$8",
-    yearlyPrice: "$6",
+    name: "Directorate",
+    monthly: 200,
+    annualMonthly: 160,
+    description: "A wider view across geopolitical risk teams.",
     features: [
-      "All free plan features and...",
-      "Mainline AI",
-      "Supermainline AGI",
-      "Free daily catered lunch",
-      "random HIPPA audits",
+      "100 monitoring topics",
+      "20 research workspaces",
+      "Custom briefing cadence concept",
     ],
   },
 ];
 
-export const Pricing = ({ className }: { className?: string }) => {
+export const Pricing = ({
+  className,
+  headingLevel = "h2",
+}: {
+  className?: string;
+  headingLevel?: "h1" | "h2";
+}) => {
   const [isAnnual, setIsAnnual] = useState(true);
-
+  const Heading = headingLevel;
   return (
-    <section className={cn("py-28 lg:py-32", className)}>
-      <div className="container max-w-5xl">
-        <div className="space-y-4 text-center">
-          <h2 className="text-2xl tracking-tight md:text-4xl lg:text-5xl">
-            Pricing
-          </h2>
-          <p className="text-muted-foreground mx-auto max-w-xl leading-snug text-balance">
-            Use Mainline for free with your whole team. Upgrade to enable
-            unlimited issues, enhanced security controls, and additional
-            features.
-          </p>
+    <section className={cn("py-24 lg:py-28", className)}>
+      <div className="container">
+        <p className="kicker mb-6">Plans / Illustrative pricing</p>
+        <Heading className="section-heading max-w-3xl">
+          A research desk.
+          <br />
+          An intelligence operation.
+        </Heading>
+        <p className="text-muted-foreground mt-6 max-w-2xl text-lg">
+          Explore a fictional model for corporate intelligence and geopolitical
+          risk teams. These demo tiers are not offers for sale; no subscriptions
+          or payments are available.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center gap-4 border-y py-5">
+          <Switch
+            id="annual-billing"
+            checked={isAnnual}
+            onCheckedChange={setIsAnnual}
+          />
+          <Label htmlFor="annual-billing">Annual billing / save 20%</Label>
+          <span className="text-muted-foreground font-mono text-xs">
+            USD · PER ANALYST
+          </span>
         </div>
-
-        <div className="mt-8 grid items-start gap-5 text-start md:mt-12 md:grid-cols-3 lg:mt-20">
-          {plans.map((plan) => (
+        <noscript>
+          <p className="mt-4 text-sm">
+            Annual examples are shown. Enable JavaScript to compare monthly
+            billing.
+          </p>
+        </noscript>
+        <div
+          className="mt-8 grid gap-5 md:grid-cols-3"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {plans.map((plan, index) => (
             <Card
               key={plan.name}
-              className={`${
-                plan.name === "Startup"
-                  ? "outline-primary origin-top outline-4"
-                  : ""
-              }`}
+              className={cn(
+                "h-full rounded-none shadow-none",
+                index === 1 && "border-t-primary border-t-4",
+              )}
             >
-              <CardContent className="flex flex-col gap-7 px-6 py-5">
-                <div className="space-y-2">
-                  <h3 className="text-foreground font-semibold">{plan.name}</h3>
-                  <div className="space-y-1">
-                    <div className="text-muted-foreground text-lg font-medium">
-                      {isAnnual ? plan.yearlyPrice : plan.monthlyPrice}{" "}
-                      {plan.name !== "Free" && (
-                        <span className="text-muted-foreground">
-                          per user/
-                          {isAnnual ? "year" : "month"}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {plan.name !== "Free" ? (
-                  <div className="flex items-center gap-2">
-                    <Switch
-                      checked={isAnnual}
-                      onCheckedChange={() => setIsAnnual(!isAnnual)}
-                      aria-label="Toggle annual billing"
-                    />
-                    <span className="text-sm font-medium">Billed annually</span>
-                  </div>
-                ) : (
-                  <span className="text-muted-foreground text-sm">
+              <CardContent className="flex h-full flex-col gap-6">
+                <div>
+                  <p className="technical-label mb-4">
+                    0{index + 1} / Demo tier
+                  </p>
+                  <h3 className="text-2xl">{plan.name}</h3>
+                  <p className="text-muted-foreground mt-2 text-sm">
                     {plan.description}
-                  </span>
-                )}
-
-                <div className="space-y-3">
-                  {plan.features.map((feature) => (
-                    <div
-                      key={feature}
-                      className="text-muted-foreground flex items-center gap-1.5"
-                    >
-                      <Check className="size-5 shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </div>
-                  ))}
+                  </p>
                 </div>
-
+                <div>
+                  <p className="font-mono text-4xl tracking-tight">
+                    ${isAnnual ? plan.annualMonthly : plan.monthly}
+                    <span className="text-muted-foreground text-sm">
+                      {" "}
+                      / month
+                    </span>
+                  </p>
+                  <p className="text-muted-foreground mt-2 text-sm">
+                    {isAnnual
+                      ? `$${plan.annualMonthly * 12} per analyst, billed yearly`
+                      : `$${plan.monthly} per analyst, billed monthly`}
+                  </p>
+                </div>
+                <ul className="space-y-3 border-t pt-6">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-start gap-3 text-sm"
+                    >
+                      <Check
+                        className="mt-0.5 size-4 shrink-0"
+                        aria-hidden="true"
+                      />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
                 <Button
-                  className="w-fit"
-                  variant={plan.name === "Startup" ? "default" : "outline"}
+                  asChild
+                  variant={index === 1 ? "default" : "outline"}
+                  className="mt-auto w-full"
                 >
-                  Get started
+                  <a href="/contact">Request access</a>
                 </Button>
               </CardContent>
             </Card>
           ))}
         </div>
+        <p className="text-muted-foreground mt-5 text-xs">
+          All prices, limits, and workflows are illustrative. Request access
+          opens the local demo inquiry form.
+        </p>
       </div>
     </section>
   );

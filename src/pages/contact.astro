@@ -1,12 +1,11 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-
-import { Background } from '@/components/background';
-import { Contact } from '@/components/blocks/contact';
-import DefaultLayout from '@/layouts/DefaultLayout.astro';
+import { Contact } from "@/components/blocks/contact";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
 ---
-<DefaultLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <Background>
-    <Contact />
-  </Background>
+
+<DefaultLayout
+  title="Request access | Kojima"
+  description="Explore Kojima's private-intelligence demo for corporate intelligence and geopolitical risk teams. Request access; no live service is connected."
+>
+  <Contact client:load />
 </DefaultLayout>
