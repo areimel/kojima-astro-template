@@ -1,237 +1,145 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { ChevronRight, Github } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import { GITHUB_URL } from "@/consts";
-import { cn } from "@/lib/utils";
 
-const ITEMS = [
-  {
-    label: "Features",
-    href: "#features",
-    dropdownItems: [
-      {
-        title: "Modern product teams",
-        href: "/#feature-modern-teams",
-        description:
-          "Mainline is built on the habits that make the best product teams successful",
-      },
-      {
-        title: "Resource Allocation",
-        href: "/#resource-allocation",
-        description: "Mainline your resource allocation and execution",
-      },
-    ],
-  },
-  { label: "About Us", href: "/about" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "FAQ", href: "/faq" },
+const links = [
+  { label: "Overview", href: "/" },
+  { label: "Platform", href: "/components" },
+  { label: "Intelligence", href: "/blog" },
+  { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
+const focus =
+  "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring";
 
-export const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [pathname, setPathname] = useState("");
+export function Navbar({ pathname = "/" }: { pathname?: string }) {
+  const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const header = useRef<HTMLElement>(null);
+  const active = (href: string) =>
+    href === "/"
+      ? pathname === "/"
+      : pathname === href || pathname.startsWith(`${href}/`);
 
   useEffect(() => {
-    setPathname(window.location.pathname);
-  }, []);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && open) {
+        setOpen(false);
+        trigger.current?.focus();
+      }
+    };
+    const onPointer = (event: PointerEvent) => {
+      if (!header.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const onResize = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    desktop.addEventListener("change", onResize);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+      desktop.removeEventListener("change", onResize);
+    };
+  }, [open]);
 
   return (
-    <section
-      className={cn(
-        "bg-background/70 absolute left-1/2 z-50 w-[min(90%,700px)] -translate-x-1/2 rounded-4xl border backdrop-blur-md transition-all duration-300",
-        "top-5 lg:top-12",
-      )}
+    <header
+      ref={header}
+      className="bg-background text-foreground border-border relative z-40 w-full border-y"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
     >
-      <div className="flex items-center justify-between px-6 py-3">
-        <a href="/" className="flex shrink-0 items-center gap-2">
-          <img
-            src="/logo.svg"
-            alt="logo"
-            width={94}
-            height={18}
-            className="dark:invert"
-          />
+      <div className="mx-auto flex min-h-20 max-w-[1600px] items-center justify-between gap-4 px-5 md:px-10">
+        <a
+          href="/"
+          aria-label="Kojima intelligence system - home"
+          className={`flex shrink-0 items-center gap-3 ${focus}`}
+        >
+          <span className="text-2xl font-bold tracking-[-0.06em]">
+            KOJIMA<span className="text-primary">.</span>
+          </span>
+          <span className="text-muted-foreground border-border hidden border-l pl-3 font-mono text-[10px] leading-tight tracking-[0.12em] sm:block">
+            INTELLIGENCE
+            <br />
+            SYSTEM
+          </span>
         </a>
-
-        {/* Desktop Navigation */}
-        <NavigationMenu className="max-lg:hidden">
-          <NavigationMenuList>
-            {ITEMS.map((link) =>
-              link.dropdownItems ? (
-                <NavigationMenuItem key={link.label} className="">
-                  <NavigationMenuTrigger className="data-[state=open]:bg-accent/50 bg-transparent! px-1.5">
-                    {link.label}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="w-[400px] space-y-2 p-4">
-                      {link.dropdownItems.map((item) => (
-                        <li key={item.title}>
-                          <a
-                            href={item.href}
-                            className="group hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex items-center gap-4 rounded-md p-3 leading-none no-underline outline-hidden transition-colors select-none"
-                          >
-                            <div className="space-y-1.5 transition-transform duration-300 group-hover:translate-x-1">
-                              <div className="text-sm leading-none font-medium">
-                                {item.title}
-                              </div>
-                              <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-                                {item.description}
-                              </p>
-                            </div>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              ) : (
-                <NavigationMenuItem key={link.label} className="">
-                  <a
-                    href={link.href}
-                    className={cn(
-                      "relative bg-transparent px-1.5 text-sm font-medium transition-opacity hover:opacity-75",
-                      pathname === link.href && "text-muted-foreground",
-                    )}
-                  >
-                    {link.label}
-                  </a>
-                </NavigationMenuItem>
-              ),
-            )}
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        {/* Auth Buttons */}
-        <div className="flex items-center gap-2.5">
+        <nav aria-label="Primary" className="hidden lg:block">
+          <ul className="flex items-center gap-6">
+            {links.map(({ label, href }) => (
+              <li key={href}>
+                <a
+                  href={href}
+                  aria-current={active(href) ? "page" : undefined}
+                  className={`hover:text-primary font-mono text-xs transition-colors ${active(href) ? "text-foreground" : "text-muted-foreground"} ${focus}`}
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="flex items-center gap-3">
           <ThemeToggle />
-          <a href="/login" className="max-lg:hidden">
-            <Button variant="outline">
-              <span className="relative z-10">Login</span>
-            </Button>
-          </a>
           <a
-            href={GITHUB_URL}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            href="/contact"
+            className={`bg-primary text-primary-foreground hidden min-h-11 items-center gap-5 px-4 font-mono text-xs transition-opacity hover:opacity-80 sm:inline-flex ${focus}`}
           >
-            <Github className="size-4" />
-            <span className="sr-only">GitHub</span>
+            Request access{" "}
+            <ArrowUpRight aria-hidden="true" className="size-4" />
           </a>
-
-          {/* Hamburger Menu Button (Mobile Only) */}
           <button
-            className="text-muted-foreground relative flex size-8 lg:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            ref={trigger}
+            type="button"
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            onClick={() => setOpen(!open)}
+            className={`border-border flex size-11 items-center justify-center border lg:hidden ${focus}`}
           >
-            <span className="sr-only">Open main menu</span>
-            <div className="absolute top-1/2 left-1/2 block w-[18px] -translate-x-1/2 -translate-y-1/2">
-              <span
-                aria-hidden="true"
-                className={`absolute block h-0.5 w-full rounded-full bg-current transition duration-500 ease-in-out ${isMenuOpen ? "rotate-45" : "-translate-y-1.5"}`}
-              ></span>
-              <span
-                aria-hidden="true"
-                className={`absolute block h-0.5 w-full rounded-full bg-current transition duration-500 ease-in-out ${isMenuOpen ? "opacity-0" : ""}`}
-              ></span>
-              <span
-                aria-hidden="true"
-                className={`absolute block h-0.5 w-full rounded-full bg-current transition duration-500 ease-in-out ${isMenuOpen ? "-rotate-45" : "translate-y-1.5"}`}
-              ></span>
-            </div>
+            {open ? (
+              <X aria-hidden="true" className="size-5" />
+            ) : (
+              <Menu aria-hidden="true" className="size-5" />
+            )}
           </button>
         </div>
       </div>
-
-      {/*  Mobile Menu Navigation */}
-      <div
-        className={cn(
-          "bg-background fixed inset-x-0 top-[calc(100%+1rem)] flex flex-col rounded-2xl border p-6 transition-all duration-300 ease-in-out lg:hidden",
-          isMenuOpen
-            ? "visible translate-y-0 opacity-100"
-            : "invisible -translate-y-4 opacity-0",
-        )}
+      <nav
+        id="mobile-navigation"
+        aria-label="Mobile primary"
+        hidden={!open}
+        className="border-border border-t px-5 py-4 lg:hidden"
       >
-        <nav className="divide-border flex flex-1 flex-col divide-y">
-          {ITEMS.map((link) =>
-            link.dropdownItems ? (
-              <div key={link.label} className="py-4 first:pt-0 last:pb-0">
-                <button
-                  onClick={() =>
-                    setOpenDropdown(
-                      openDropdown === link.label ? null : link.label,
-                    )
-                  }
-                  className="text-foreground flex w-full items-center justify-between text-base font-medium"
-                >
-                  {link.label}
-                  <ChevronRight
-                    className={cn(
-                      "size-4 transition-transform duration-200",
-                      openDropdown === link.label ? "rotate-90" : "",
-                    )}
-                  />
-                </button>
-                <div
-                  className={cn(
-                    "overflow-hidden transition-all duration-300",
-                    openDropdown === link.label
-                      ? "mt-4 max-h-[1000px] opacity-100"
-                      : "max-h-0 opacity-0",
-                  )}
-                >
-                  <div className="bg-muted/50 space-y-3 rounded-lg p-4">
-                    {link.dropdownItems.map((item) => (
-                      <a
-                        key={item.title}
-                        href={item.href}
-                        className="hover:bg-accent group block rounded-md p-2 transition-colors"
-                        onClick={() => {
-                          setIsMenuOpen(false);
-                          setOpenDropdown(null);
-                        }}
-                      >
-                        <div className="transition-transform duration-200 group-hover:translate-x-1">
-                          <div className="text-primary font-medium">
-                            {item.title}
-                          </div>
-
-                          <p className="text-muted-foreground mt-1 text-sm">
-                            {item.description}
-                          </p>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
+        <ul className="divide-border divide-y">
+          {links.map(({ label, href }) => (
+            <li key={href}>
               <a
-                key={link.label}
-                href={link.href}
-                className={cn(
-                  "text-foreground hover:text-foreground/80 py-4 text-base font-medium transition-colors first:pt-0 last:pb-0",
-                  pathname === link.href && "text-muted-foreground",
-                )}
-                onClick={() => setIsMenuOpen(false)}
+                href={href}
+                aria-current={active(href) ? "page" : undefined}
+                onClick={() => setOpen(false)}
+                className={`hover:text-primary flex min-h-12 items-center justify-between font-mono text-sm ${focus}`}
               >
-                {link.label}
+                {label}
+                <ArrowUpRight aria-hidden="true" className="size-4" />
               </a>
-            ),
-          )}
-        </nav>
-      </div>
-    </section>
+            </li>
+          ))}
+        </ul>
+        <a
+          href="/contact"
+          onClick={() => setOpen(false)}
+          className={`bg-primary text-primary-foreground mt-4 flex min-h-12 items-center justify-between px-4 font-mono text-xs ${focus}`}
+        >
+          Request access <ArrowUpRight aria-hidden="true" className="size-4" />
+        </a>
+      </nav>
+    </header>
   );
-};
+}

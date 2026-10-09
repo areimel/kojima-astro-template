@@ -1,73 +1,38 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
-
-export const SITE_TITLE = "Mainline - Modern Astro Template";
+export const SITE_TITLE = "Kojima | Intelligence System";
 export const SITE_DESCRIPTION =
-  "A modern, fully featured Astro template built with Shadcn/UI, TailwindCSS and TypeScript, perfect for your next web application.";
+  "Explore Kojima, a private-intelligence platform concept for connecting signals, investigating context, and building a shared operating picture.";
 
+// Retained for existing template attribution links.
 export const GITHUB_URL =
   "https://github.com/shadcnblocks/mainline-astro-template";
 
 export const SITE_METADATA = {
-  title: {
-    default: "Mainline - Modern Astro Template",
-    template: "%s | Mainline",
-  },
-  description:
-    "A modern Astro template built with shadcn/ui, Tailwind & MDX. Open source - MIT License.",
+  title: { default: SITE_TITLE, template: "%s | Kojima" },
+  description: SITE_DESCRIPTION,
   keywords: [
-    "Astro",
-    "astro template",
-    "astro theme",
-    "astro starter",
-    "shadcn template",
-    "shadcn theme",
-    "shadcn starter",
-    "tailwind template",
-    "tailwind theme",
-    "tailwind starter",
-    "mdx template",
-    "mdx theme",
-    "mdx starter",
+    "Kojima",
+    "private intelligence",
+    "situational awareness",
+    "intelligence platform",
+    "analysis workspace",
+    "situation room",
+    "product demo",
   ],
-  authors: [{ name: "shadcnblocks.com" }],
-  creator: "shadcnblocks.com",
-  publisher: "shadcnblocks.com",
-  robots: {
-    index: true,
-    follow: true,
-  },
+  authors: [{ name: "Kojima" }],
+  creator: "Kojima",
+  publisher: "Kojima",
+  robots: { index: true, follow: true },
   icons: {
-    icon: [
-      { url: "/favicon/favicon.ico", sizes: "48x48" },
-      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
-      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon/favicon.ico" },
-    ],
-    apple: [{ url: "/favicon/apple-touch-icon.png", sizes: "180x180" }],
-    shortcut: [{ url: "/favicon/favicon.ico" }],
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml", sizes: "any" }],
   },
   openGraph: {
-    title: "Mainline - Modern Astro Template",
-    description:
-      "A modern Astro template built with shadcn/ui, Tailwind & MDX. Open source - MIT License.",
-    siteName: "Mainline",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Mainline - Modern Astro Template",
-      },
-    ],
+    siteName: "Kojima",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Mainline - Modern Astro Template",
-    description:
-      "A modern Astro template built with shadcn/ui, Tailwind & MDX. Open source - MIT License.",
-    images: ["/og-image.jpg"],
-    creator: "@ausrobdev",
+    card: "summary",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
 };

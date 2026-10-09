@@ -1,46 +1,47 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 import { Moon, Sun } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-
-const ThemeToggle = () => {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-
+export function ThemeToggle() {
+  const [dark, setDark] = useState(true);
   useEffect(() => {
-    // Get initial theme from localStorage or system preference
-    const savedTheme = localStorage.getItem("theme");
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-      .matches
-      ? "dark"
-      : "light";
-    const initialTheme = savedTheme || systemTheme;
-
-    setTheme(initialTheme as "light" | "dark");
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
+    const sync = () =>
+      setDark(document.documentElement.classList.contains("dark"));
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", newTheme);
-  };
+  function toggle() {
+    const nextDark = !document.documentElement.classList.contains("dark");
+    const theme = nextDark ? "dark" : "light";
+    document.documentElement.classList.toggle("dark", nextDark);
+    document.documentElement.style.colorScheme = theme;
+    setDark(nextDark);
+    try {
+      localStorage.setItem("theme", theme);
+    } catch {
+      /* Theme remains usable when storage is blocked. */
+    }
+  }
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
-      className="size-8"
-      onClick={toggleTheme}
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+      title={dark ? "Switch to light theme" : "Switch to dark theme"}
+      className="text-foreground border-border hover:bg-accent focus-visible:outline-ring flex size-11 items-center justify-center border transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
     >
-      <Sun className="size-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-      <Moon className="absolute size-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
+      {dark ? (
+        <Sun aria-hidden="true" className="size-4" />
+      ) : (
+        <Moon aria-hidden="true" className="size-4" />
+      )}
+    </button>
   );
-};
-
-export { ThemeToggle };
+}
