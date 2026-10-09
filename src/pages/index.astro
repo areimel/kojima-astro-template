@@ -1,30 +1,10 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-
-import { Background } from '@/components/background';
-import { FAQ } from '@/components/blocks/faq';
-import { Features } from '@/components/blocks/features';
-import { Hero } from '@/components/blocks/hero';
-import { Logos } from '@/components/blocks/logos';
-import { Pricing } from '@/components/blocks/pricing';
-import { ResourceAllocation } from '@/components/blocks/resource-allocation';
-import { Testimonials } from '@/components/blocks/testimonials';
-import DefaultLayout from '@/layouts/DefaultLayout.astro';
-
-
-
+import { SITE_TITLE, SITE_DESCRIPTION } from "@/consts";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import { IntelligenceHome } from "@/components/kojima/intelligence-home";
+import "@/styles/kojima-home.css";
 ---
 
-<DefaultLayout title={SITE_TITLE} description={SITE_DESCRIPTION} >
-  <Background className="via-muted to-muted/80">
-    <Hero />
-    <Logos client:only="react"/> 
-    <Features />
-    <ResourceAllocation />
-  </Background>
-  <Testimonials client:only='react'/>
-  <Background variant="bottom">
-    <Pricing client:only='react'/>
-    <FAQ client:only='react'/>
-  </Background>
+<DefaultLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <IntelligenceHome client:load />
 </DefaultLayout>
