@@ -12,7 +12,7 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "pnpm run build && pnpm run preview --host 127.0.0.1 --port 4322",
+    command: "pnpm run build && pnpm run preview --ignore-lock --host 127.0.0.1 --port 4322",
     url: "http://127.0.0.1:4322",
     reuseExistingServer: false,
     timeout: 120_000,
