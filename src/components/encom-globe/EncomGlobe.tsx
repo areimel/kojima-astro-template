@@ -214,6 +214,7 @@ export function EncomGlobe({
   return (
     <figure
       aria-label={name}
+      data-status={status}
       // An opaque palette background (encom/mono) needs the dark tokens for HUD text contrast.
       className={cn("relative m-0 aspect-square w-full overflow-hidden border border-border bg-background", opaque && "dark", className)}
       style={opaque ? { backgroundColor: opaque } : undefined}

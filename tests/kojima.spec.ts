@@ -7,7 +7,7 @@ async function open(page: Page, path: string) {
   return response;
 }
 
-const routes = ["/", "/components", "/about", "/pricing", "/contact", "/login", "/signup", "/faq", "/blog", "/blog/post-1", "/blog/post-2", "/blog/post-3", "/blog/post-4", "/blog/post-5", "/privacy", "/404"];
+const routes = ["/", "/components", "/about", "/pricing", "/contact", "/login", "/signup", "/faq", "/blog", "/blog/post-1", "/blog/post-2", "/blog/post-3", "/blog/post-4", "/blog/post-5", "/privacy", "/globe-demo", "/404"];
 
 for (const theme of ["dark", "light"]) {
   for (const route of routes) {
