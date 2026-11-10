@@ -1,0 +1,8 @@
+{
+  "introLinesCount": 0,
+  "layers": {
+    "smoke": false,
+    "satellites": false,
+    "introLines": false
+  }
+}

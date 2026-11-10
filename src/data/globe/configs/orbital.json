@@ -1,0 +1,9 @@
+{
+  "viewAngle": 0.35,
+  "scale": 0.9,
+  "layers": {
+    "pins": false,
+    "smoke": false,
+    "atmosphere": true
+  }
+}
