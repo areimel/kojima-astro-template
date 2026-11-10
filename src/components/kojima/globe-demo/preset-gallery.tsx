@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { configs, DATASETS, FEED_URL, minimal, orbital } from "./globe-demo-data";
+import { allData, configs, DATASETS, FEED_URL, minimal, orbital } from "./globe-demo-data";
 
 import { EncomGlobe } from "@/components/encom-globe";
 import { meta, PanelHeading } from "@/components/kojima/panel-heading";
@@ -41,12 +41,23 @@ const cells: { id: string; title: string; props: string; globe: ReactNode }[] = 
     props: `dataUrl="${FEED_URL}" (300 pins)`,
     globe: <EncomGlobe dataUrl={FEED_URL} config={configs.minimal} aria-label="Globe with 300 pins loaded from a remote feed" />,
   },
+  {
+    id: "ambient",
+    title: "Ambient, static",
+    props: 'preset="ambient" autoRotate={false} layers={{ markers: false }}',
+    globe: (
+      <EncomGlobe
+        preset="ambient" autoRotate={false} layers={{ markers: false }} data={allData}
+        aria-label="Static ambient globe without auto-rotation"
+      />
+    ),
+  },
 ];
 
 export function PresetGallery() {
   return (
     <section aria-label="Preset gallery" className="overflow-hidden border border-border">
-      <PanelHeading number="02" title="Preset gallery" detail="Five concurrent instances" />
+      <PanelHeading number="02" title="Preset gallery" detail="Six concurrent instances" />
       <ul className="-mr-px -mb-px grid md:grid-cols-2 lg:grid-cols-3">
         {cells.map((c) => (
           <li key={c.id} className="min-w-0 border-r border-b border-border bg-background">
