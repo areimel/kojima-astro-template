@@ -44,7 +44,7 @@ If nothing resolves, or the value is `"none"`, the element is left alone.
 
 ### Breakpoint
 
-`MOBILE_BREAKPOINT = 768` in `src/lib/animations/config.ts`. Mobile means `(max-width: 767px)`. The same constant is used by `src/hooks/use-mobile.ts` (`useIsMobile`), so React and the engine agree. The media queries in `src/styles/animations/base.css` hardcode 768 and 767; change them together with the constant.
+`MOBILE_BREAKPOINT = 768` in `src/lib/breakpoints.ts` (dependency-free; re-exported by `src/lib/animations/config.ts`). Mobile means `(max-width: 767px)`. The same constant is used by `src/hooks/use-mobile.ts` (`useIsMobile`), so React and the engine agree. The media queries in `src/styles/animations/base.css` hardcode 768 and 767; change them together with the constant.
 
 ## Usage
 
@@ -132,10 +132,11 @@ One-shot presets (`load`, `scroll`) are remembered per element. A finished one-s
 
 - **Reduced motion.** When `(prefers-reduced-motion: reduce)` matches, the engine arms nothing, the head script does not add `anim-ready`, and `base.css`, `ambient.css`, `glitch.css`, `reveal.css`, and `text.css` disable their motion. Content is shown at full opacity. Toggling the preference at runtime starts or stops the engine.
 - **No JavaScript.** Hiding rules only apply under `html.anim-ready`. That class is added by an inline script in `BaseHead.astro` (or by the engine), so without JS the content is visible and unmodified.
-- **React islands.** Island content is not touched before hydration. Until Astro removes the `ssr` attribute from `astro-island`, `base.css` hides the island's animated elements in CSS, and the engine skips anything inside `astro-island[ssr]`. A MutationObserver watches for the attribute change and arms the element in the same tick, so there is no flash.
-- **Failsafe.** Anything hidden by a prehide preset is revealed after 4s. The CSS does this for unhydrated islands; the engine does it for its own targets. Targets waiting on a scroll trigger are exempt, since they are meant to stay hidden until scrolled to.
+- **Pre-hide marker.** `anim()` emits `data-anim-hide="both|desktop|mobile"` for breakpoints whose resolved preset pre-hides (entrance presets on load/scroll triggers). `base.css` hides those elements until the engine marks them with `data-anim-state`, so there is no flash before the script runs or before hydration. Plain-HTML authors can add `data-anim-hide` by hand.
+- **React islands.** Island content is not touched before hydration. Astro removes `astro-island[ssr]` *before* React finishes hydrating, so the engine (`hydration.ts`) also waits until React has claimed each element (a `__reactFiber$` key, polled per frame, 1.5s cap). Mutating text earlier caused React error #418.
+- **Failsafe.** Anything hidden by a prehide preset is revealed after 4s. The CSS does this for `data-anim-hide` elements; the engine (`FAILSAFE_MS` in config) does it for its own targets. Targets waiting on a scroll trigger are exempt, since they are meant to stay hidden until scrolled to.
 - **Errors.** A preset that throws is caught; its targets are shown and the error is logged in development.
-- **Text presets.** `decode` and `typewriter` write only to existing text nodes. While they run, `aria-label` holds the real text (only if the element had none), so screen readers do not read glyph noise. On finish or revert, every text node gets its original string back, and the label is removed. `counter` does the same with its single number node.
+- **Text presets.** `decode` and `typewriter` write only to existing text nodes. While they run, headings, links, buttons and elements with a `role` get an `aria-label` holding the real text (only if they had none); other elements get `aria-busy="true"` instead, since `aria-label` is not allowed on generic elements. Decode and typewriter pin `min-height` to avoid reflow. On finish or revert, every text node gets its original string back, and the label is removed. `counter` does the same with its single number node.
 - **Use text presets on static text only.** They write directly to DOM text nodes and restore the original string afterwards. Do not use them on text that React, a form, or another script updates during the animation.
 
 ## Tuning tokens
@@ -147,7 +148,7 @@ All in `src/lib/animations/config.ts`.
 | `MOBILE_BREAKPOINT` | `768` | Mobile/desktop split (shared with `use-mobile.ts`). |
 | `READY_CLASS` | `"anim-ready"` | Set on `<html>` when motion is available. Must match the inline script in `BaseHead.astro`. |
 | `ATTR` | attribute names | Single source for every `data-*` name the engine and CSS use. |
-| `EASE` | `out` = `outExpo`, `inOut` = `inOutQuad`, `linear`, `steps` = `steps(6)`, `hold` = `steps(1)` | Easing. `hold` gives the mechanical snap used by most glitch and ambient presets. |
+| `EASE` | `out` = `outExpo`, `inOut` = `inOutQuad`, `linear` | Easing names. Stepped easings live in `presets/easing.ts` (`STEPPED.steps` = `steps(6)`, `STEPPED.hold` = `steps(1)`) so `config.ts` stays free of animejs imports. |
 | `DURATION` | `fast` 240, `base` 600, `slow` 1000, `decode` 900 | Default durations. |
 | `STAGGER` | `70` | Default gap between targets. |
 | `GLYPHS` | `A-Z0-9` plus symbols | Character pool for `decode`. |
@@ -158,7 +159,6 @@ Anime.js v4 notes:
 
 - Named string easings (`"outExpo"`, `"inOutQuad"`, `"linear"`) work directly.
 - Stepped easing must be the function returned by `steps(n)` from `animejs`. The stepped tokens are functions for this reason; do not replace them with strings.
-- `EASE.steps` is defined but not currently used by any preset. `EASE.hold` is.
 
 ## Adding or changing a preset
 
@@ -166,7 +166,7 @@ Anime.js v4 notes:
 2. **Implement it.** Write an `AnimationPreset` in the matching file under `src/lib/animations/presets/` (`text.ts`, `glitch.ts`, `reveal.ts`, `ambient.ts`). Set `defaultTrigger`, `defaults`, `prehide`, and `mobileFallback` if needed. `run()` must leave targets fully visible when it finishes, and `revert()` must restore the DOM, text, and inline styles exactly.
 3. **Style it (if needed).** Add or extend the partial for that family in `src/styles/animations/`. Include a `prefers-reduced-motion` rule there.
 4. **Register it.** Add the preset to the family array the file exports (`textPresets`, `glitchPresets`, `revealPresets`, `ambientPresets`). `registry.ts` already spreads those arrays. A new family also needs a spread in `registry.ts`.
-5. **Prehide lists.** If `prehide: true`, add the name to every list in `src/styles/animations/base.css`: the desktop `:is()` list, the mobile `:is()` list, and the `:not()` lists for `data-animation`. The lists must match the presets with `prehide: true`.
+5. **Prehide.** Nothing to update by hand: `anim()` derives `data-anim-hide` from the preset's `prehide` flag. Use `withRestore()` from `presets/lifecycle.ts` so styles, classes, and custom properties are restored exactly.
 6. **Document it.** Add a row to the table in this file.
 7. **Add it to the lab.** Add an entry to `LAB_FAMILIES` in `src/components/kojima/animation-lab-data.ts`. The `/components` lab renders from that list.
 8. **Test it.** Run `pnpm run check` and `pnpm run test:e2e`. Also check the preset by hand in `pnpm run dev` at a desktop width and a mobile width, with reduced motion emulated, and with JavaScript disabled.
@@ -179,7 +179,12 @@ Anime.js v4 notes:
 | `src/lib/animations/config.ts` | Tuning tokens, attribute names, breakpoint, queries. |
 | `src/lib/animations/attributes.ts` | `anim()` helper and attribute resolution (preset, settings, targets). |
 | `src/lib/animations/registry.ts` | Builds the preset map from the family arrays. |
-| `src/lib/animations/engine.ts` | Scanning, triggers, safety net, reduced-motion and breakpoint handling, Astro view-transition hooks. |
+| `src/lib/animations/engine.ts` | Scanning, triggers, safety net, detached-node cleanup, reduced-motion and breakpoint handling, Astro view-transition hooks. |
+| `src/lib/animations/hydration.ts` | Waits for React islands to finish hydrating before arming. |
+| `src/lib/animations/scroll.ts` | Shared scroll-once IntersectionObservers (threshold 0 for tall elements). |
+| `src/lib/breakpoints.ts` | `MOBILE_BREAKPOINT`, `MOBILE_QUERY` (no dependencies). |
+| `src/lib/animations/presets/lifecycle.ts` | `withRestore()`: shared snapshot/classes/cleanup helper used by every preset. |
+| `src/lib/animations/presets/easing.ts` | Stepped anime.js easings. |
 | `src/lib/animations/presets/text.ts` | `decode`, `typewriter`. |
 | `src/lib/animations/presets/glitch.ts` | `glitch-in`, `slice`, `flicker-in`. |
 | `src/lib/animations/presets/reveal.ts` | `fade-up`, `scan-wipe`, `redact`, `boot-stagger`. |
@@ -187,7 +192,7 @@ Anime.js v4 notes:
 | `src/scripts/animations.ts` | Starts the engine. Imported by `BaseHead.astro`. |
 | `src/components/BaseHead.astro` | Inline script that sets `anim-ready`; loads the engine. |
 | `src/styles/animations.css` | Entry point that imports the partials below. |
-| `src/styles/animations/base.css` | Pre-hydration hiding, island failsafe, reduced-motion overrides. |
+| `src/styles/animations/base.css` | `data-anim-hide` pre-hiding, failsafe, reduced-motion overrides. |
 | `src/styles/animations/text.css` | Typewriter cursor. |
 | `src/styles/animations/glitch.css` | Glitch filter and registered custom properties. |
 | `src/styles/animations/reveal.css` | Scan-wipe line and redaction bar. |
