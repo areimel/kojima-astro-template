@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { AnimationLab } from '@/components/kojima/animation-lab';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -144,6 +145,7 @@ export function ComponentShowcase() {
             </Accordion>
           </div>
         </section>
+        <AnimationLab />
         <div className={`mt-6 flex flex-wrap justify-between gap-3 ${meta}`}><span>Kojima / Primitive compatibility</span><span>End of index — 003</span></div>
       </div>
     </div>
