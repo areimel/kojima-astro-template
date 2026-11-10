@@ -76,3 +76,29 @@
 9. Secondary pages + shell; axe audits settled state.
 10. Animation e2e suite; fix island hydration race (React #418).
 11. Review fixes: shared lifecycle helper, detached-entry cleanup, `data-anim-hide` marker, breakpoints module.
+
+# EncomGlobe (Three.js Encom globe)
+
+Design + plan: `docs/superpowers/specs/2026-11-10-encom-globe-design.md`.
+
+## Confirmed direction
+
+- Faithful modern rebuild of arscan/encom-globe (MIT) on three r187, vanilla engine + thin React wrapper.
+- Kojima tokens by default; `encom` and `mono` presets.
+- Hex-tile land + intro, intro lines, pins + smoke, markers + arcs, satellites/constellations; optional atmosphere glow + flyTo. No drones.
+- Light HUD frame; drag + hover/click pins. JSON-driven config/data; many instances per page.
+- `/globe-demo` styleguide page.
+
+## TODO
+
+- [ ] Design doc, deps, shared contracts (types, schema, geo/animate/canvas/dispose utils).
+- [ ] Hex grid generator + hex-grid / intro-lines layers.
+- [ ] Engine core, camera rig (orbit, drag, flyTo), picking, atmosphere.
+- [ ] Pins + smoke layers.
+- [ ] Markers + arcs layer.
+- [ ] Satellites + constellations layer.
+- [ ] Shared hooks (reduced motion, dark), PanelHeading extraction, demo datasets.
+- [ ] `EncomGlobe` React component, presets/palette, HUD frame, fallbacks.
+- [ ] `/globe-demo` page + footer link.
+- [ ] Unit + e2e tests.
+- [ ] `docs/globe.md`, review fixes, final verification.
