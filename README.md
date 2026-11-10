@@ -58,6 +58,10 @@ Contact prepares a local text download. Sign-in and registration validate sample
 
 `InstrumentGraphic` accepts `variant` (`radar`, `wave`, `grid`), `palette` (`orange`, `paper`, `dark`), numeric `seed`, `complexity` (0–100), `className`, `title`, and `decorative`. Equal inputs produce equal artwork on the server and client. SVG definition IDs are unique per component instance.
 
+## Animations
+
+Motion is attribute-driven and uses a fixed preset pool built on Anime.js v4. Add `data-animation="<preset>"` to an element, or use the `anim()` helper in React. Breakpoint overrides, triggers, accessibility rules, and the steps for adding a preset are in [docs/animations.md](./docs/animations.md).
+
 ## Verification
 
 ```sh
