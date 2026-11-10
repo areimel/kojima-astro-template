@@ -13,7 +13,7 @@ const CLASS = {
 } as const;
 
 /** Hold each keyframe value, then snap to the next: mechanical, not smooth. */
-const HOLD = "steps(1)";
+const HOLD = EASE.hold;
 
 /** One target's running pieces: anime handles plus any non-anime restore logic. */
 interface Part {

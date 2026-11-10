@@ -22,7 +22,7 @@ const stepped = (values: Array<number | string>, total: number) =>
   values.map((to) => ({
     to,
     duration: total / values.length,
-    ease: "steps(1)",
+    ease: EASE.hold,
   }));
 
 /** Signed random integer in [-max, max] (never 0 so jitter is always visible). */

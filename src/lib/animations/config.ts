@@ -1,3 +1,5 @@
+import { steps } from "animejs";
+
 /** Central tuning knobs for every animation preset. Change values here to update the whole site. */
 
 /** Shared with `src/hooks/use-mobile.ts`; below this width the mobile attribute applies. */
@@ -31,8 +33,10 @@ export const EASE = {
   out: "outExpo",
   inOut: "inOutQuad",
   linear: "linear",
-  /** Stepped easing for terminal / CRT feel. */
-  steps: "steps(6)",
+  /** Stepped easing for terminal / CRT feel (anime v4 needs the function, not a string). */
+  steps: steps(6),
+  /** Hold each keyframe value, then snap to the next. */
+  hold: steps(1),
 } as const;
 
 /** Duration tokens in ms. */
