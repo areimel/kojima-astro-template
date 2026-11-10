@@ -1,45 +1,61 @@
 import { useEffect, useRef, useState } from "react";
 
-import { GlobeEngine } from "../engine/globe-engine";
-import { createAtmosphereLayer } from "../engine/layers/atmosphere";
+import { GlobeController } from "../engine/globe-controller";
 import { DEFAULT_PALETTE } from "../engine/types";
-import { resolveConfig } from "../schema";
+import { parseGlobeData, resolveConfig } from "../schema";
+
+import hotspots from "@/data/globe/hotspots.json";
+import offices from "@/data/globe/offices.json";
+import routes from "@/data/globe/routes.json";
+import satellites from "@/data/globe/satellites.json";
+
 
 /** TEMPORARY dev harness for the engine; delete once EncomGlobe is wired. */
 export default function Sandbox() {
   const ref = useRef<HTMLDivElement>(null);
-  const engineRef = useRef<GlobeEngine | null>(null);
+  const engineRef = useRef<GlobeController | null>(null);
   const [running, setRunning] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    try {
-      const config = resolveConfig({ layers: { atmosphere: true } });
-      const engine = GlobeEngine.create(el, {
-        config,
-        palette: DEFAULT_PALETTE,
-        reducedMotion: false,
-      });
-      engine.addLayer(createAtmosphereLayer(engine.context));
-      engineRef.current = engine;
-      (window as unknown as { __engine: GlobeEngine }).__engine = engine;
-      return () => {
-        engine.dispose();
-        engineRef.current = null;
-      };
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-    }
+    let ctl: GlobeController | null = null;
+    let cancelled = false;
+    const { data } = parseGlobeData({
+      pins: [...offices.pins, ...hotspots.pins],
+      markers: routes.markers,
+      satellites: satellites.satellites,
+      constellations: satellites.constellations,
+    });
+    const atmosphere = new URLSearchParams(location.search).has("atmo");
+    GlobeController.create(el, {
+      config: resolveConfig({ viewAngle: 0.1, layers: { atmosphere } }),
+      palette: DEFAULT_PALETTE,
+      reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+      data,
+    })
+      .then((c) => {
+        if (cancelled) return c.dispose();
+        ctl = c;
+        engineRef.current = c;
+        (window as unknown as { __globe: GlobeController }).__globe = c;
+        c.on("select", (item) => console.log("select", item?.kind, item?.item.id));
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : String(e)));
+    return () => {
+      cancelled = true;
+      ctl?.dispose();
+      engineRef.current = null;
+    };
   }, []);
 
   const toggle = () => {
     const e = engineRef.current;
     if (!e) return;
-    if (e.isRunning) e.pause();
+    if (e.engine.isRunning) e.pause();
     else e.resume();
-    setRunning(e.isRunning);
+    setRunning(e.engine.isRunning);
   };
 
   return (

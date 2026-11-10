@@ -121,7 +121,7 @@ export function createHexGridLayer(ctx: EngineContext, grid: GridFile): GlobeLay
   applyPalette(ctx.palette);
 
   return {
-    name: "hex-grid",
+    name: "grid",
     object: root,
     update(frame: FrameContext) {
       const settled = frame.reducedMotion || !ctx.config.intro;

@@ -55,7 +55,7 @@ export function createIntroLinesLayer(ctx: EngineContext): GlobeLayer {
   root.visible = false;
 
   return {
-    name: "intro-lines",
+    name: "introLines",
     object: root,
     update(frame: FrameContext) {
       const t = introLinesDuration > 0 ? frame.time / introLinesDuration : 1;
