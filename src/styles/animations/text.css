@@ -1,0 +1,29 @@
+/* Animation styles: text presets. */
+
+/* Block cursor drawn as a pseudo-element so no DOM nodes are added (React-safe). */
+.anim-typing::after {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 0.15em;
+  vertical-align: text-bottom;
+  background: var(--primary, currentColor);
+  animation: anim-cursor-blink 0.4s steps(1, end) infinite;
+}
+
+@keyframes anim-cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-typing::after {
+    animation: none;
+  }
+}
