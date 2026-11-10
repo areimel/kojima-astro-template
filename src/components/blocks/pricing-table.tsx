@@ -58,7 +58,7 @@ export const PricingTable = () => (
             </TableRow>
           </TableHeader>
           <TableBody
-            {...anim({ animation: "counter", children: "tr:nth-child(5) td" })}
+            {...anim({ animation: "counter", children: "[data-counter]" })}
           >
             {rows.map(([label, ...values]) => (
               <TableRow key={label}>
@@ -69,6 +69,7 @@ export const PricingTable = () => (
                   <TableCell
                     key={index}
                     className="px-4 py-5 font-mono text-xs"
+                    data-counter={value.startsWith("$") || undefined}
                   >
                     {value}
                   </TableCell>

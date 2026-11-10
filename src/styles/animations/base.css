@@ -6,67 +6,34 @@ html.anim-ready [data-anim-pending] {
   opacity: 0 !important;
 }
 
-/* Island content cannot be touched by JS before hydration, so it is hidden
-   by CSS alone until Astro removes the island's `ssr` attribute. The lists
-   below must match the presets with `prehide: true` in registry.ts. Desktop
-   and mobile are split so `data-mobile-animation="none"` stays visible. */
+/* Elements marked data-anim-hide (emitted by anim() from the resolved preset's
+   `prehide` per breakpoint; plain-HTML authors may add it by hand) stay hidden
+   until the engine processes them and sets data-anim-state. This covers FOUC
+   before the module script runs and the gap while an island hydrates. Values:
+   "both" | "desktop" | "mobile". The engine hands over to data-anim-pending
+   in the same tick it sets the state, so there is no visible flash.
+   The 4s failsafe must match SAFETY_NET_MS in engine.ts. */
 @keyframes anim-failsafe {
   to {
     opacity: 1;
   }
 }
 
+html.anim-ready [data-anim-hide="both"]:not([data-anim-state]) {
+  opacity: 0;
+  animation: anim-failsafe 0s 4s forwards;
+}
+
+/* Breakpoint px values must match MOBILE_BREAKPOINT (768) in config.ts. */
 @media (min-width: 768px) {
-  html.anim-ready
-    astro-island[ssr]
-    :is(
-      [data-desktop-animation="decode"],
-      [data-desktop-animation="typewriter"],
-      [data-desktop-animation="glitch-in"],
-      [data-desktop-animation="slice"],
-      [data-desktop-animation="flicker-in"],
-      [data-desktop-animation="fade-up"],
-      [data-desktop-animation="scan-wipe"],
-      [data-desktop-animation="redact"],
-      [data-desktop-animation="boot-stagger"],
-      [data-animation="decode"]:not([data-desktop-animation]),
-      [data-animation="typewriter"]:not([data-desktop-animation]),
-      [data-animation="glitch-in"]:not([data-desktop-animation]),
-      [data-animation="slice"]:not([data-desktop-animation]),
-      [data-animation="flicker-in"]:not([data-desktop-animation]),
-      [data-animation="fade-up"]:not([data-desktop-animation]),
-      [data-animation="scan-wipe"]:not([data-desktop-animation]),
-      [data-animation="redact"]:not([data-desktop-animation]),
-      [data-animation="boot-stagger"]:not([data-desktop-animation])
-    ) {
+  html.anim-ready [data-anim-hide="desktop"]:not([data-anim-state]) {
     opacity: 0;
     animation: anim-failsafe 0s 4s forwards;
   }
 }
 
 @media (max-width: 767px) {
-  html.anim-ready
-    astro-island[ssr]
-    :is(
-      [data-mobile-animation="decode"],
-      [data-mobile-animation="typewriter"],
-      [data-mobile-animation="glitch-in"],
-      [data-mobile-animation="slice"],
-      [data-mobile-animation="flicker-in"],
-      [data-mobile-animation="fade-up"],
-      [data-mobile-animation="scan-wipe"],
-      [data-mobile-animation="redact"],
-      [data-mobile-animation="boot-stagger"],
-      [data-animation="decode"]:not([data-mobile-animation]),
-      [data-animation="typewriter"]:not([data-mobile-animation]),
-      [data-animation="glitch-in"]:not([data-mobile-animation]),
-      [data-animation="slice"]:not([data-mobile-animation]),
-      [data-animation="flicker-in"]:not([data-mobile-animation]),
-      [data-animation="fade-up"]:not([data-mobile-animation]),
-      [data-animation="scan-wipe"]:not([data-mobile-animation]),
-      [data-animation="redact"]:not([data-mobile-animation]),
-      [data-animation="boot-stagger"]:not([data-mobile-animation])
-    ) {
+  html.anim-ready [data-anim-hide="mobile"]:not([data-anim-state]) {
     opacity: 0;
     animation: anim-failsafe 0s 4s forwards;
   }
@@ -74,9 +41,7 @@ html.anim-ready [data-anim-pending] {
 
 @media (prefers-reduced-motion: reduce) {
   html.anim-ready [data-anim-pending],
-  html.anim-ready
-    astro-island[ssr]
-    :is([data-animation], [data-desktop-animation], [data-mobile-animation]) {
+  html.anim-ready [data-anim-hide]:not([data-anim-state]) {
     opacity: 1 !important;
     animation: none !important;
   }

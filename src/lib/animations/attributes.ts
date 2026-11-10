@@ -34,14 +34,50 @@ const OPTION_ATTRS: Record<keyof AnimOptions, string> = {
   children: ATTR.children,
 };
 
-/** Builds data-attributes to spread onto an element: `<h1 {...anim({ animation: "decode" })}>`. */
+/**
+ * Builds data-attributes to spread onto an element: `<h1 {...anim({ animation: "decode" })}>`.
+ * Also emits `data-anim-hide` ("both" | "desktop" | "mobile") when the resolved
+ * preset hides its target until the engine runs; base.css hides such elements
+ * until the engine sets `data-anim-state`. Plain-HTML authors can add
+ * `data-anim-hide="both"` by hand on elements with a prehiding preset.
+ */
 export function anim(opts: AnimOptions): Record<string, string> {
   const out: Record<string, string> = {};
   for (const key of Object.keys(OPTION_ATTRS) as (keyof AnimOptions)[]) {
     const value = opts[key];
     if (value !== undefined) out[OPTION_ATTRS[key]] = String(value);
   }
+  const hide = hideBreakpoints(opts);
+  if (hide) out[ATTR.hide] = hide;
   return out;
+}
+
+const TRIGGERS: readonly string[] = ["load", "scroll", "hover", "loop"];
+
+const str = (v: unknown) => (v === undefined ? null : String(v).trim() || null);
+
+/** Which breakpoints prehide: only one-shot (load/scroll) presets with `prehide`. */
+function hideBreakpoints(
+  opts: AnimOptions,
+): "both" | "desktop" | "mobile" | null {
+  const hides = (isMobile: boolean) => {
+    const name = pickValue(
+      str(opts.animation),
+      str(opts.desktop),
+      str(opts.mobile),
+      isMobile,
+    );
+    const preset = name ? getPreset(name) : undefined;
+    if (!preset?.prehide) return false;
+    const trigger = TRIGGERS.includes(opts.trigger ?? "")
+      ? opts.trigger
+      : preset.defaultTrigger;
+    return trigger === "load" || trigger === "scroll";
+  };
+  const desktop = hides(false);
+  const mobile = hides(true);
+  if (desktop && mobile) return "both";
+  return desktop ? "desktop" : mobile ? "mobile" : null;
 }
 
 const warned = new Set<string>();
@@ -61,20 +97,36 @@ export function resolvePresetName(
   el: Element,
   isMobile: boolean,
 ): PresetName | null {
-  const base = attr(el, ATTR.animation);
+  return pickValue(
+    attr(el, ATTR.animation),
+    attr(el, ATTR.desktop),
+    attr(el, ATTR.mobile),
+    isMobile,
+    true,
+  );
+}
+
+/** Shared breakpoint resolution (mobileFallback, explicit desktop/mobile, "none"). */
+function pickValue(
+  base: string | null,
+  desktop: string | null,
+  mobile: string | null,
+  isMobile: boolean,
+  warn = false,
+): PresetName | null {
   let value: string | null;
   if (isMobile) {
-    value = attr(el, ATTR.mobile);
+    value = mobile;
     if (value === null) {
       const basePreset = isPresetName(base) ? getPreset(base) : undefined;
       value = basePreset?.mobileFallback ?? base;
     }
   } else {
-    value = attr(el, ATTR.desktop) ?? base;
+    value = desktop ?? base;
   }
   if (value === null || value === "none") return null;
   if (!isPresetName(value)) {
-    warnOnce(`Unknown animation "${value}"`);
+    if (warn) warnOnce(`Unknown animation "${value}"`);
     return null;
   }
   return value;
@@ -86,8 +138,6 @@ function num(el: Element, name: string): number | undefined {
   const n = Number(raw);
   return Number.isFinite(n) ? n : undefined;
 }
-
-const TRIGGERS: readonly string[] = ["load", "scroll", "hover", "loop"];
 
 export function resolveSettings(
   el: Element,

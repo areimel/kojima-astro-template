@@ -1,6 +1,8 @@
 import { createTimeline, utils } from "animejs";
 
 import { DURATION, EASE, GLITCH_COLORS, STAGGER } from "../config";
+import { STEPPED } from "./easing";
+import { withRestore } from "./lifecycle";
 import type {
   AnimationHandle,
   AnimationPreset,
@@ -22,7 +24,7 @@ const stepped = (values: Array<number | string>, total: number) =>
   values.map((to) => ({
     to,
     duration: total / values.length,
-    ease: EASE.hold,
+    ease: STEPPED.hold,
   }));
 
 /** Signed random integer in [-max, max] (never 0 so jitter is always visible). */
@@ -30,8 +32,8 @@ const jitter = (max: number) =>
   utils.random(1, max) * (Math.random() < 0.5 ? -1 : 1);
 
 /**
- * Shared runner: snapshots inline styles, hides targets for frame 0, builds one
- * timeline with a per-target `build` and restores everything on finish/revert.
+ * Shared runner: hides targets for frame 0, builds one timeline with a
+ * per-target `build`, and restores everything on finish/revert.
  */
 function withCleanup(
   targets: HTMLElement[],
@@ -43,37 +45,25 @@ function withCleanup(
   ) => void,
   classes: string[] = [],
 ): AnimationHandle {
-  const saved = targets.map((el) => el.getAttribute("style"));
-  targets.forEach((el) => {
-    el.style.opacity = "0"; // frame 0 before data-anim-pending is removed
-    el.classList.add(...classes);
-    if (classes.length) {
-      el.style.setProperty("--glitch-a", GLITCH_COLORS.a);
-      el.style.setProperty("--glitch-b", GLITCH_COLORS.b);
-    }
-  });
-
-  const restore = () => {
-    targets.forEach((el, i) => {
-      el.classList.remove(...classes);
-      GLITCH_VARS.forEach((v) => el.style.removeProperty(v));
-      if (saved[i] === null) el.removeAttribute("style");
-      else el.setAttribute("style", saved[i]);
-    });
-  };
-
-  const handle: AnimationHandle = {
-    revert() {
-      tl.revert();
-      restore();
+  return withRestore(
+    targets,
+    { classes, clearProps: ["opacity", ...GLITCH_VARS] },
+    (release) => {
+      targets.forEach((el) => {
+        el.style.opacity = "0"; // frame 0 before data-anim-pending is removed
+        if (classes.length) {
+          el.style.setProperty("--glitch-a", GLITCH_COLORS.a);
+          el.style.setProperty("--glitch-b", GLITCH_COLORS.b);
+        }
+      });
+      const tl = createTimeline({
+        defaults: { duration },
+        onComplete: release,
+      });
+      targets.forEach((el, i) => build(tl, el, delay + i * stagger));
+      return tl;
     },
-  };
-  const tl = createTimeline({
-    defaults: { duration },
-    onComplete: () => handle.revert(),
-  });
-  targets.forEach((el, i) => build(tl, el, delay + i * stagger));
-  return handle;
+  );
 }
 
 const glitchIn: AnimationPreset = {

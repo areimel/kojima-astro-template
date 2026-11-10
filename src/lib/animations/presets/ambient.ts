@@ -1,6 +1,8 @@
 import { animate, utils } from "animejs";
 
 import { DURATION, EASE, GLITCH_COLORS } from "../config";
+import { STEPPED } from "./easing";
+import { combine, withRestore, type RestoreOptions } from "./lifecycle";
 import type {
   AnimationHandle,
   AnimationPreset,
@@ -13,54 +15,43 @@ const CLASS = {
 } as const;
 
 /** Hold each keyframe value, then snap to the next: mechanical, not smooth. */
-const HOLD = EASE.hold;
-
-/** One target's running pieces: anime handles plus any non-anime restore logic. */
-interface Part {
-  handles: AnimationHandle[];
-  /** Undoes DOM writes anime does not own (text nodes, extra properties). */
-  restore?: () => void;
-}
+const HOLD = STEPPED.hold;
 
 /**
- * Shared "animate + class + cleanup" runner. `build` starts one target's
- * animation. The classes are added first and dropped when `finish` is called
- * (for one-shot effects, from anime's onComplete) or on revert. Classes the
- * author already set are never removed. `revert()` stops every animation, runs
- * every restore, and clears whatever this run added.
+ * Per-target runner on top of `withRestore`: `build` starts one target's
+ * animation (calling `release` from onComplete for one-shot effects) and may
+ * return an extra `restore` for non-style writes. Author-set classes are never
+ * removed, and inline styles end exactly as they started.
  */
 function runTargets(
   targets: HTMLElement[],
-  classes: readonly string[],
-  build: (el: HTMLElement, index: number, finish: () => void) => Part,
+  opts: Pick<RestoreOptions, "classes" | "clearProps">,
+  build: (
+    el: HTMLElement,
+    index: number,
+    release: () => void,
+  ) => { handles: AnimationHandle[]; restore?: () => void },
 ): AnimationHandle {
-  const runs = targets.map((el, index) => {
-    const added = classes.filter((c) => !el.classList.contains(c));
-    el.classList.add(...added);
-    let released = false;
-    const finish = () => {
-      if (released) return;
-      released = true;
-      el.classList.remove(...added);
-    };
-    return { part: build(el, index, finish), finish };
-  });
-
-  return {
-    revert() {
-      for (const { part, finish } of runs) {
-        part.handles.forEach((handle) => handle.revert());
-        part.restore?.();
-        finish();
-      }
-    },
-  };
+  return combine(
+    targets.map((el, index) => {
+      let restore: (() => void) | undefined;
+      return withRestore(
+        [el],
+        { ...opts, restore: () => restore?.() },
+        (release) => {
+          const part = build(el, index, release);
+          restore = part.restore;
+          return part.handles;
+        },
+      );
+    }),
+  );
 }
 
 const delayFor = (s: AnimationSettings, index: number) =>
   s.delay + s.stagger * index;
 
-/* blink: status-indicator light, hard on/off with randomised loop gaps. */
+/* blink: status-indicator light, hard on/off. The loop gap is randomised once per run (anime takes a fixed loopDelay). */
 const blink: AnimationPreset = {
   name: "blink",
   defaultTrigger: "loop",
@@ -68,7 +59,7 @@ const blink: AnimationPreset = {
   mobileFallback: "none",
   prehide: false,
   run(_el, targets, s) {
-    return runTargets(targets, [], (el, i) => ({
+    return runTargets(targets, {}, (el, i) => ({
       handles: [
         animate(el, {
           opacity: [1, 0.25, 1],
@@ -91,7 +82,7 @@ const pulse: AnimationPreset = {
   mobileFallback: "none",
   prehide: false,
   run(_el, targets, s) {
-    return runTargets(targets, [CLASS.pulse], (el, i) => ({
+    return runTargets(targets, { classes: [CLASS.pulse] }, (el, i) => ({
       handles: [
         animate(el, {
           "--pulse": [0, 1],
@@ -105,7 +96,7 @@ const pulse: AnimationPreset = {
   },
 };
 
-/* flicker: idle monitor, mostly full opacity with brief dips at random intervals. */
+/* flicker: idle monitor, mostly full opacity with brief dips; the gap between dips is randomised once per run. */
 const FLICKER_KEYFRAMES = [1, 1, 1, 0.6, 1, 0.85, 1];
 const flicker: AnimationPreset = {
   name: "flicker",
@@ -114,7 +105,7 @@ const flicker: AnimationPreset = {
   mobileFallback: "none",
   prehide: false,
   run(_el, targets, s) {
-    return runTargets(targets, [], (el, i) => ({
+    return runTargets(targets, {}, (el, i) => ({
       handles: [
         animate(el, {
           opacity: FLICKER_KEYFRAMES,
@@ -182,7 +173,7 @@ const counter: AnimationPreset = {
   defaults: { duration: DURATION.slow },
   prehide: false,
   run(_el, targets, s) {
-    return runTargets(targets, [], (el, i) => {
+    return runTargets(targets, {}, (el, i, release) => {
       const spot = findCounterSpot(el);
       if (!spot) return { handles: [] };
 
@@ -203,7 +194,7 @@ const counter: AnimationPreset = {
             delay: delayFor(s, i),
             ease: EASE.out,
             onUpdate: write,
-            onComplete: restore, // land on the exact original text
+            onComplete: release, // runs restore: land on the exact original text
           }),
         ],
         restore,
@@ -219,26 +210,29 @@ const glitchHover: AnimationPreset = {
   defaults: { duration: 250 },
   prehide: false,
   run(_el, targets, s) {
-    return runTargets(targets, [CLASS.glitch], (el, i, finish) => {
-      el.style.setProperty("--glitch-a", GLITCH_COLORS.a);
-      el.style.setProperty("--glitch-b", GLITCH_COLORS.b);
-      return {
-        handles: [
-          animate(el, {
-            translateX: [0, -2, 2, -1, 1, 0],
-            "--glitch-x": [0, 2, -2, 1, -1, 0],
-            duration: s.duration,
-            delay: delayFor(s, i),
-            ease: HOLD,
-            onComplete: finish, // class drops once the jitter lands on 0
-          }),
-        ],
-        restore: () => {
-          el.style.removeProperty("--glitch-a");
-          el.style.removeProperty("--glitch-b");
-        },
-      };
-    });
+    return runTargets(
+      targets,
+      {
+        classes: [CLASS.glitch],
+        clearProps: ["--glitch-a", "--glitch-b", "--glitch-x", "transform"],
+      },
+      (el, i, release) => {
+        el.style.setProperty("--glitch-a", GLITCH_COLORS.a);
+        el.style.setProperty("--glitch-b", GLITCH_COLORS.b);
+        return {
+          handles: [
+            animate(el, {
+              translateX: [0, -2, 2, -1, 1, 0],
+              "--glitch-x": [0, 2, -2, 1, -1, 0],
+              duration: s.duration,
+              delay: delayFor(s, i),
+              ease: HOLD,
+              onComplete: release, // class + inline styles restored once the jitter lands on 0
+            }),
+          ],
+        };
+      },
+    );
   },
 };
 

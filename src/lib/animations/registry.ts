@@ -19,7 +19,9 @@ export const registry = Object.fromEntries(
   all.map((preset) => [preset.name, preset]),
 ) as Record<PresetName, AnimationPreset>;
 
-export function isPresetName(value: string | null | undefined): value is PresetName {
+export function isPresetName(
+  value: string | null | undefined,
+): value is PresetName {
   return !!value && (PRESET_NAMES as readonly string[]).includes(value);
 }
 

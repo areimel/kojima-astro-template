@@ -1,6 +1,7 @@
 import { animate, stagger, utils } from "animejs";
 
 import { DURATION, EASE, STAGGER } from "../config";
+import { withRestore } from "./lifecycle";
 import type {
   AnimationHandle,
   AnimationPreset,
@@ -37,19 +38,6 @@ function play(
   settings: AnimationSettings,
   spec: RevealSpec,
 ): AnimationHandle {
-  const classes = spec.classes ?? [];
-  // Snapshot inline styles so the element ends (or reverts) exactly as it started.
-  const originalStyles = targets.map((target) => target.getAttribute("style"));
-
-  const restore = () => {
-    targets.forEach((target, i) => {
-      target.classList.remove(...classes);
-      const style = originalStyles[i];
-      if (style === null) target.removeAttribute("style");
-      else target.setAttribute("style", style);
-    });
-  };
-
   const tweens = Object.fromEntries(
     Object.entries(spec.to).map(([key, value]) => [
       key,
@@ -57,23 +45,16 @@ function play(
     ]),
   );
 
-  targets.forEach((target) => target.classList.add(...classes));
-  utils.set(targets, spec.from);
-
-  const animation = animate(targets, {
-    ...tweens,
-    duration: settings.duration,
-    delay: stagger(settings.stagger, { start: settings.delay }),
-    ease: spec.ease,
-    onComplete: restore,
+  return withRestore(targets, { classes: spec.classes }, (release) => {
+    utils.set(targets, spec.from);
+    return animate(targets, {
+      ...tweens,
+      duration: settings.duration,
+      delay: stagger(settings.stagger, { start: settings.delay }),
+      ease: spec.ease,
+      onComplete: release,
+    });
   });
-
-  return {
-    revert() {
-      animation.revert();
-      restore();
-    },
-  };
 }
 
 function createReveal(spec: RevealSpec): AnimationPreset {

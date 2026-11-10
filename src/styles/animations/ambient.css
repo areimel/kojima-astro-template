@@ -18,9 +18,11 @@
 
 /* glitch-hover: RGB channel split. --glitch-x and the colours are set by the preset. */
 .anim-glitch-hover {
+  /* Button's transition-all would smooth the stepped jitter; the class is dropped on completion. */
+  transition: none;
   text-shadow:
     calc(var(--glitch-x, 0) * 1px) 0 0 var(--glitch-a, var(--primary)),
-    calc(var(--glitch-x, 0) * -1px) 0 0 var(--glitch-b, #5ad1e6);
+    calc(var(--glitch-x, 0) * -1px) 0 0 var(--glitch-b, var(--glitch-b-default));
 }
 
 @media (prefers-reduced-motion: reduce) {

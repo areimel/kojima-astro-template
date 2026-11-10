@@ -11,19 +11,19 @@ import {
 import {
   ANIMATED_SELECTOR,
   ATTR,
+  FAILSAFE_MS,
   MOBILE_QUERY,
   READY_CLASS,
   REDUCED_MOTION_QUERY,
-  SCROLL_OBSERVER,
 } from "./config";
+import { awaitingReactHydration, inUnhydratedIsland } from "./hydration";
 import { getPreset } from "./registry";
+import { disconnectScroll, observeScroll } from "./scroll";
 import type {
   AnimationHandle,
   AnimationPreset,
   AnimationSettings,
 } from "./types";
-
-const SAFETY_NET_MS = 4000;
 
 interface Entry {
   handle?: AnimationHandle;
@@ -36,39 +36,15 @@ const entries = new Map<HTMLElement, Entry>();
 let played = new WeakSet<HTMLElement>();
 /** Targets hidden and waiting for a scroll trigger (exempt from the safety net). */
 const waiting = new Set<HTMLElement>();
-const scrollCallbacks = new WeakMap<Element, () => void>();
 
 let initialized = false;
 let reduced = false;
 let isMobile = false;
-let scrollObserver: IntersectionObserver | null = null;
 let domObserver: MutationObserver | null = null;
 let scanFrame = 0;
 let safetyTimer = 0;
 
 const root = () => document.documentElement;
-const inUnhydratedIsland = (el: Element) => !!el.closest("astro-island[ssr]");
-
-const HYDRATION_WAIT_MS = 1500;
-const firstSeen = new WeakMap<Element, number>();
-const hasFiber = (node: object) =>
-  Object.keys(node).some((key) => key.startsWith("__reactFiber$"));
-
-/**
- * Astro removes `ssr` as soon as it calls hydrateRoot(), but React hydrates
- * asynchronously. Rewriting text before React claims it causes hydration error
- * #418, so React islands wait until the element's subtree has been claimed
- * (or a timeout passes, so a stalled island never blocks the animation).
- */
-function awaitingReactHydration(el: HTMLElement) {
-  const island = el.closest("astro-island");
-  if (!island || !Object.keys(island).some((k) => k.startsWith("__reactContainer$")))
-    return false;
-  const start = firstSeen.get(el) ?? performance.now();
-  firstSeen.set(el, start);
-  if (performance.now() - start > HYDRATION_WAIT_MS) return false;
-  return ![el, ...el.querySelectorAll("*")].every(hasFiber);
-}
 
 function showTargets(targets: HTMLElement[]) {
   for (const t of targets) {
@@ -92,7 +68,7 @@ function dropEntry(el: HTMLElement) {
 
 function revertAll() {
   for (const el of Array.from(entries.keys())) dropEntry(el);
-  scrollObserver?.disconnect();
+  disconnectScroll();
 }
 
 function play(
@@ -122,17 +98,6 @@ function inViewport(el: HTMLElement) {
   );
 }
 
-function getScrollObserver() {
-  scrollObserver ??= new IntersectionObserver((records) => {
-    for (const record of records) {
-      if (!record.isIntersecting) continue;
-      scrollObserver?.unobserve(record.target);
-      scrollCallbacks.get(record.target)?.();
-    }
-  }, SCROLL_OBSERVER);
-  return scrollObserver;
-}
-
 function arm(el: HTMLElement) {
   const name = resolvePresetName(el, isMobile);
   const preset = name ? getPreset(name) : undefined;
@@ -150,7 +115,6 @@ function arm(el: HTMLElement) {
 
   const entry: Entry = { targets: resolveTargets(el, settings) };
   entries.set(el, entry);
-  el.setAttribute(ATTR.state, "armed");
   const run = () => {
     if (!entries.has(el)) return;
     play(el, entry, preset, settings);
@@ -163,13 +127,14 @@ function arm(el: HTMLElement) {
   if (oneShot && preset.prehide) {
     for (const t of entry.targets) t.setAttribute(ATTR.pending, "");
   }
+  // After pending: base.css hides [data-anim-hide] until state is set, so
+  // targets go from "hidden by hide marker" to "hidden by pending" with no flash.
+  el.setAttribute(ATTR.state, "armed");
 
   if (trigger === "scroll" && !inViewport(el)) {
     for (const t of entry.targets)
       if (t.hasAttribute(ATTR.pending)) waiting.add(t);
-    scrollCallbacks.set(el, run);
-    getScrollObserver().observe(el);
-    entry.cleanup = () => scrollObserver?.unobserve(el);
+    entry.cleanup = observeScroll(el, run);
   } else if (trigger === "hover") {
     el.addEventListener("pointerenter", run);
     el.addEventListener("focusin", run);
@@ -182,10 +147,18 @@ function arm(el: HTMLElement) {
   }
 }
 
+/** Drops entries (and waiting targets) whose elements were removed from the document. */
+function sweepDetached() {
+  for (const el of Array.from(entries.keys()))
+    if (!el.isConnected) dropEntry(el);
+  for (const t of Array.from(waiting)) if (!t.isConnected) waiting.delete(t);
+}
+
 /** Arms every not-yet-processed animated element outside unhydrated islands. */
 function scan() {
   scanFrame = 0;
   if (reduced) return;
+  sweepDetached();
   let deferred = false;
   for (const el of document.querySelectorAll<HTMLElement>(ANIMATED_SELECTOR)) {
     if (el.hasAttribute(ATTR.state) || inUnhydratedIsland(el)) continue;
@@ -197,7 +170,7 @@ function scan() {
   }
   if (deferred) scheduleScan();
   window.clearTimeout(safetyTimer);
-  safetyTimer = window.setTimeout(releaseStuck, SAFETY_NET_MS);
+  safetyTimer = window.setTimeout(releaseStuck, FAILSAFE_MS);
 }
 
 function scheduleScan() {
@@ -213,16 +186,20 @@ function releaseStuck() {
   }
 }
 
+function resetDom() {
+  waiting.clear();
+  for (const el of document.querySelectorAll(`[${ATTR.pending}]`))
+    el.removeAttribute(ATTR.pending);
+  for (const el of document.querySelectorAll(`[${ATTR.state}]`))
+    el.removeAttribute(ATTR.state);
+}
+
 function clearAll() {
   revertAll();
   window.clearTimeout(safetyTimer);
   cancelAnimationFrame(scanFrame);
   scanFrame = 0;
-  for (const el of document.querySelectorAll(`[${ATTR.pending}]`))
-    el.removeAttribute(ATTR.pending);
-  for (const el of document.querySelectorAll(`[${ATTR.state}]`))
-    el.removeAttribute(ATTR.state);
-  waiting.clear();
+  resetDom();
 }
 
 function disable() {
@@ -235,18 +212,21 @@ function disable() {
 function observeDom() {
   domObserver?.disconnect();
   domObserver ??= new MutationObserver((mutations) => {
+    let rescan = false;
     for (const m of mutations) {
       if (m.type === "attributes") return scan(); // island hydrated: arm in the same tick, no flash
+      if (m.removedNodes.length) sweepDetached();
       for (const node of m.addedNodes) {
         if (
           node instanceof Element &&
           (node.matches(ANIMATED_SELECTOR) ||
             node.querySelector(ANIMATED_SELECTOR))
         ) {
-          return scheduleScan();
+          rescan = true;
         }
       }
     }
+    if (rescan) scheduleScan();
   });
   domObserver.observe(document.body, {
     childList: true,
@@ -265,11 +245,7 @@ function enable() {
 /** Breakpoint changed: revert everything and re-resolve, without replaying finished one-shots. */
 function rearmAll() {
   revertAll();
-  waiting.clear();
-  for (const el of document.querySelectorAll(`[${ATTR.pending}]`))
-    el.removeAttribute(ATTR.pending);
-  for (const el of document.querySelectorAll(`[${ATTR.state}]`))
-    el.removeAttribute(ATTR.state);
+  resetDom();
   scan();
 }
 

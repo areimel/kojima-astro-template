@@ -1,10 +1,7 @@
-import { steps } from "animejs";
-
 /** Central tuning knobs for every animation preset. Change values here to update the whole site. */
 
 /** Shared with `src/hooks/use-mobile.ts`; below this width the mobile attribute applies. */
-export const MOBILE_BREAKPOINT = 768;
-export const MOBILE_QUERY = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`;
+export { MOBILE_BREAKPOINT, MOBILE_QUERY } from "@/lib/breakpoints";
 export const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 /** Attribute names, kept in one place so the engine, helper, and CSS agree. */
@@ -19,6 +16,8 @@ export const ATTR = {
   children: "data-anim-children",
   /** Set by the engine while a target is waiting to animate (CSS hides it). */
   pending: "data-anim-pending",
+  /** Emitted by `anim()`: which breakpoints pre-hide the element (`both|desktop|mobile`) until processed. */
+  hide: "data-anim-hide",
   /** Set by the engine once an element has been processed. */
   state: "data-anim-state",
 } as const;
@@ -33,10 +32,6 @@ export const EASE = {
   out: "outExpo",
   inOut: "inOutQuad",
   linear: "linear",
-  /** Stepped easing for terminal / CRT feel (anime v4 needs the function, not a string). */
-  steps: steps(6),
-  /** Hold each keyframe value, then snap to the next. */
-  hold: steps(1),
 } as const;
 
 /** Duration tokens in ms. */
@@ -50,6 +45,12 @@ export const DURATION = {
 /** Default stagger between children in ms. */
 export const STAGGER = 70;
 
+/** Safety net: targets still hidden after this long are revealed. Must match the 4s failsafe in styles/animations/base.css. */
+export const FAILSAFE_MS = 4000;
+
+/** Typewriter cursor blink period in ms. Must match the 0.4s animation in styles/animations/text.css. */
+export const TYPE_CURSOR_BLINK_MS = 400;
+
 /** Glyph pool used by scramble/decode effects. */
 export const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&@$/\\<>[]{}=+*_-";
 
@@ -59,8 +60,8 @@ export const SCROLL_OBSERVER = {
   rootMargin: "0px 0px -8% 0px",
 } as const;
 
-/** Theme colour tokens (CSS custom properties from kojima.css) used for glitch channels. */
+/** Glitch channel colours. `--glitch-b-default` (with its hex fallback) is declared once in styles/animations/glitch.css. */
 export const GLITCH_COLORS = {
   a: "var(--primary)",
-  b: "var(--chart-2, #5ad1e6)",
+  b: "var(--glitch-b-default)",
 } as const;

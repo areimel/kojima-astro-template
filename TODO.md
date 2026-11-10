@@ -51,14 +51,28 @@
 ## TODO
 
 - [x] Install animejs v4 and define shared contracts (types, config, registry).
-- [ ] Engine, attribute parsing, `anim()` helper, head wiring, base CSS.
-- [ ] Text presets (decode, typewriter).
-- [ ] Glitch presets (glitch-in, slice, flicker-in).
-- [ ] Reveal presets (fade-up, scan-wipe, redact, boot-stagger).
-- [ ] Ambient/hover presets (blink, pulse, flicker, counter, glitch-hover).
-- [ ] Animation lab on /components.
-- [ ] Apply to homepage.
-- [ ] Apply to secondary pages, navbar, footer.
-- [ ] Documentation (docs/animations.md).
-- [ ] Playwright animation tests + full verification.
-- [ ] Code review fixes.
+- [x] Engine, attribute parsing, `anim()` helper, head wiring, base CSS.
+- [x] Text presets (decode, typewriter).
+- [x] Glitch presets (glitch-in, slice, flicker-in).
+- [x] Reveal presets (fade-up, scan-wipe, redact, boot-stagger).
+- [x] Ambient/hover presets (blink, pulse, flicker, counter, glitch-hover).
+- [x] Animation lab on /components.
+- [x] Apply to homepage.
+- [x] Apply to secondary pages, navbar, footer.
+- [x] Documentation (docs/animations.md).
+- [x] Playwright animation tests + full verification.
+- [x] Code review fixes.
+
+## Animation commit timeline
+
+1. Contracts, config tokens, registry, animejs v4.
+2. Attribute-driven engine, `anim()` helper, pre-hide CSS.
+3. Text decode + glitch presets.
+4. Reveal + ambient presets.
+5. Fix: anime v4 `steps()` easing functions (found via browser smoke test).
+6. Docs (`docs/animations.md`).
+7. Animation lab on /components.
+8. Homepage animations.
+9. Secondary pages + shell; axe audits settled state.
+10. Animation e2e suite; fix island hydration race (React #418).
+11. Review fixes: shared lifecycle helper, detached-entry cleanup, `data-anim-hide` marker, breakpoints module.
