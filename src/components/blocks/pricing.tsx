@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { anim } from "@/lib/animations/attributes";
 import { cn } from "@/lib/utils";
 
 const plans = [
@@ -57,12 +58,18 @@ export const Pricing = ({
     <section className={cn("py-24 lg:py-28", className)}>
       <div className="container">
         <p className="kicker mb-6">Plans / Illustrative pricing</p>
-        <Heading className="section-heading max-w-3xl">
+        <Heading
+          {...anim({ animation: "decode" })}
+          className="section-heading max-w-3xl"
+        >
           A research desk.
           <br />
           An intelligence operation.
         </Heading>
-        <p className="text-muted-foreground mt-6 max-w-2xl text-lg">
+        <p
+          {...anim({ animation: "fade-up", delay: 150 })}
+          className="text-muted-foreground mt-6 max-w-2xl text-lg"
+        >
           Explore a fictional model for corporate intelligence and geopolitical
           risk teams. These demo tiers are not offers for sale; no subscriptions
           or payments are available.
@@ -85,6 +92,7 @@ export const Pricing = ({
           </p>
         </noscript>
         <div
+          {...anim({ animation: "boot-stagger", children: ":scope > *" })}
           className="mt-8 grid gap-5 md:grid-cols-3"
           aria-live="polite"
           aria-atomic="true"

@@ -1,21 +1,32 @@
 ﻿import type { CollectionEntry } from "astro:content";
 import { format } from "date-fns";
 
+import { anim } from "@/lib/animations/attributes";
+
 const BlogPosts = ({ posts }: { posts: CollectionEntry<"blog">[] }) => (
   <section className="container max-w-5xl">
     <div className="max-w-2xl space-y-5">
       <p className="text-muted-foreground font-mono text-xs tracking-widest uppercase">
         Kojima / Field notes
       </p>
-      <h1 className="text-4xl tracking-tight md:text-5xl">
+      <h1
+        {...anim({ animation: "decode" })}
+        className="text-4xl tracking-tight md:text-5xl"
+      >
         Signals. Context. Decisions.
       </h1>
-      <p className="text-muted-foreground leading-relaxed">
+      <p
+        {...anim({ animation: "fade-up", delay: 150 })}
+        className="text-muted-foreground leading-relaxed"
+      >
         Working notes on corporate intelligence, geopolitical risk, and supply
         chain exposure. All scenarios are synthetic demonstrations.
       </p>
     </div>
-    <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div
+      {...anim({ animation: "boot-stagger", children: ":scope > a" })}
+      className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+    >
       {posts.map((post, index) => (
         <a
           key={post.id}

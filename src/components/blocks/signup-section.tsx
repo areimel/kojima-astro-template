@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { anim } from "@/lib/animations/attributes";
 
 const SignupSection = () => {
   const [ready, setReady] = useState(false);
@@ -28,8 +29,13 @@ const SignupSection = () => {
       <div className="container grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
           <p className="kicker mb-6">Kojima / Access protocol</p>
-          <h1 className="section-heading">Give your team a clearer picture.</h1>
-          <p className="text-muted-foreground mt-6 max-w-lg text-lg">
+          <h1 {...anim({ animation: "decode" })} className="section-heading">
+            Give your team a clearer picture.
+          </h1>
+          <p
+            {...anim({ animation: "fade-up", delay: 150 })}
+            className="text-muted-foreground mt-6 max-w-lg text-lg"
+          >
             Explore a workspace concept for corporate intelligence and
             geopolitical risk teams, from regional monitoring to executive
             briefings.
@@ -48,7 +54,10 @@ const SignupSection = () => {
             <a href="/contact">Prepare an access inquiry</a>
           </Button>
         </div>
-        <Card className="rounded-none shadow-none">
+        <Card
+          {...anim({ animation: "fade-up" })}
+          className="rounded-none shadow-none"
+        >
           <CardHeader>
             <p className="technical-label">Local form / Registration</p>
             <h2 className="text-2xl">Preview registration.</h2>
@@ -98,7 +107,11 @@ const SignupSection = () => {
                   Use 8–128 characters. Do not use a real password.
                 </p>
               </div>
-              <Button type="submit" disabled={!ready} className="w-full">
+              <Button
+                type="submit"
+                disabled={!ready}
+                className="w-full whitespace-normal"
+              >
                 Validate demo registration
               </Button>
               <p role="status" className="text-muted-foreground text-sm">

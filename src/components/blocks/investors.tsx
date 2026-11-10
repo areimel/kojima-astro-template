@@ -1,4 +1,6 @@
-﻿const layers = [
+﻿import { anim } from "@/lib/animations/attributes";
+
+const layers = [
   {
     number: "01",
     title: "Signal record",
@@ -28,10 +30,16 @@ export function Investors() {
       <p className="text-muted-foreground mb-4 font-mono text-xs tracking-widest uppercase">
         System construction / Concept model
       </p>
-      <h2 className="text-3xl tracking-tight md:text-4xl">
+      <h2
+        {...anim({ animation: "scan-wipe" })}
+        className="text-3xl tracking-tight md:text-4xl"
+      >
         Make the reasoning inspectable.
       </h2>
-      <div className="border-border mt-10 grid border-t border-l md:grid-cols-3">
+      <div
+        {...anim({ animation: "boot-stagger", children: ":scope > article" })}
+        className="border-border mt-10 grid border-t border-l md:grid-cols-3"
+      >
         {layers.map((layer) => (
           <article
             key={layer.number}

@@ -3,6 +3,8 @@
 import type { CollectionEntry } from "astro:content";
 import { format } from "date-fns";
 
+import { anim } from "@/lib/animations/attributes";
+
 const BlogPost = ({
   post,
   children,
@@ -20,13 +22,19 @@ const BlogPost = ({
         >
           <span aria-hidden="true">← </span>Field notes / Index
         </a>
-        <h1 className="mt-8 max-w-4xl text-4xl tracking-tight md:text-5xl lg:text-6xl">
+        <h1
+          {...anim({ animation: "decode" })}
+          className="mt-8 max-w-4xl text-4xl tracking-tight md:text-5xl lg:text-6xl"
+        >
           {title}
         </h1>
         <p className="text-muted-foreground mt-6 max-w-3xl text-lg leading-relaxed">
           {description}
         </p>
-        <div className="text-muted-foreground mt-8 flex flex-wrap gap-x-6 gap-y-3 font-mono text-xs">
+        <div
+          {...anim({ animation: "fade-up" })}
+          className="text-muted-foreground mt-8 flex flex-wrap gap-x-6 gap-y-3 font-mono text-xs"
+        >
           {authorName && <span>{authorName}</span>}
           <time dateTime={new Date(pubDate).toISOString()}>
             {format(pubDate, "yyyy.MM.dd")}

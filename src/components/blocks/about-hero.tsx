@@ -1,4 +1,6 @@
-﻿const stages = [
+﻿import { anim } from "@/lib/animations/attributes";
+
+const stages = [
   ["01", "Observe", "Signals in context"],
   ["02", "Correlate", "Dependencies & exposure"],
   ["03", "Assess", "Evidence & uncertainty"],
@@ -13,10 +15,16 @@ export function AboutHero() {
       </p>
       <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
         <div>
-          <h1 className="text-4xl tracking-tight sm:text-5xl lg:text-6xl">
+          <h1
+            {...anim({ animation: "decode" })}
+            className="text-4xl tracking-tight sm:text-5xl lg:text-6xl"
+          >
             Context for consequential decisions.
           </h1>
-          <p className="text-muted-foreground mt-6 max-w-xl text-xl leading-relaxed">
+          <p
+            {...anim({ animation: "fade-up", delay: 150 })}
+            className="text-muted-foreground mt-6 max-w-xl text-xl leading-relaxed"
+          >
             Kojima explores a shared intelligence workspace for corporate
             intelligence and geopolitical risk teams. Connect emerging signals
             to the operations, suppliers, and decisions they could affect.
@@ -28,7 +36,10 @@ export function AboutHero() {
             live intelligence service.
           </p>
         </div>
-        <dl className="border-border border-t">
+        <dl
+          {...anim({ animation: "boot-stagger", children: ":scope > div" })}
+          className="border-border border-t"
+        >
           {stages.map(([number, name, purpose]) => (
             <div
               key={name}

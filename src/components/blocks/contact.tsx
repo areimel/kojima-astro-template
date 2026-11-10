@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { anim } from "@/lib/animations/attributes";
 
 export const Contact = () => {
   const [ready, setReady] = useState(false);
@@ -54,15 +55,24 @@ export const Contact = () => {
       <div className="container grid gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
           <p className="kicker mb-6">01 / Request access</p>
-          <h1 className="section-heading max-w-xl">
+          <h1
+            {...anim({ animation: "decode" })}
+            className="section-heading max-w-xl"
+          >
             Start with the questions that matter.
           </h1>
-          <p className="text-muted-foreground mt-6 max-w-lg text-lg">
+          <p
+            {...anim({ animation: "fade-up", delay: 150 })}
+            className="text-muted-foreground mt-6 max-w-lg text-lg"
+          >
             Define a private-intelligence workflow for your corporate
             intelligence or geopolitical risk team. What do you monitor, and
             which decisions depend on your briefings?
           </p>
-          <div className="mt-10 divide-y border-y">
+          <div
+            {...anim({ animation: "boot-stagger", children: ":scope > div" })}
+            className="mt-10 divide-y border-y"
+          >
             {[
               [
                 "01 / Monitoring",
@@ -88,7 +98,10 @@ export const Contact = () => {
             browser; it does not contact a sales team. Use sample information.
           </p>
         </div>
-        <Card className="rounded-none shadow-none">
+        <Card
+          {...anim({ animation: "fade-up" })}
+          className="rounded-none shadow-none"
+        >
           <CardHeader>
             <p className="technical-label">Inquiry / Local preparation</p>
             <h2 className="text-2xl">Define your brief.</h2>

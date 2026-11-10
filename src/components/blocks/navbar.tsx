@@ -4,6 +4,7 @@ import { ArrowUpRight, Menu, X } from "lucide-react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MAIN_NAV } from "@/consts";
+import { anim } from "@/lib/animations/attributes";
 
 const focus =
   "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring";
@@ -61,6 +62,7 @@ export function Navbar({ pathname = "/" }: { pathname?: string }) {
     >
       <div className="mx-auto flex min-h-20 max-w-[1600px] items-center justify-between gap-4 px-5 md:px-10">
         <a
+          {...anim({ animation: "flicker-in", trigger: "load" })}
           href="/"
           aria-label="Kojima intelligence system - home"
           className={`flex shrink-0 items-center gap-3 ${focus}`}
@@ -98,6 +100,7 @@ export function Navbar({ pathname = "/" }: { pathname?: string }) {
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <a
+            {...anim({ animation: "glitch-hover" })}
             href="/contact"
             className={`bg-primary text-primary-foreground hidden min-h-11 items-center gap-5 px-4 font-mono text-xs transition-opacity hover:opacity-80 sm:inline-flex ${focus}`}
           >

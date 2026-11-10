@@ -1,4 +1,5 @@
 ﻿import { Button } from "@/components/ui/button";
+import { anim } from "@/lib/animations/attributes";
 import { cn } from "@/lib/utils";
 
 export const AboutSection = () => (
@@ -81,7 +82,10 @@ export function TextSection({
   return (
     <div className="flex-1 space-y-6">
       {title && (
-        <h2 className="text-foreground text-3xl tracking-tight md:text-4xl">
+        <h2
+          {...anim({ animation: "scan-wipe" })}
+          className="text-foreground text-3xl tracking-tight md:text-4xl"
+        >
           {title}
         </h2>
       )}

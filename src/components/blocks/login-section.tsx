@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { anim } from "@/lib/animations/attributes";
 
 const LoginSection = () => {
   const [ready, setReady] = useState(false);
@@ -23,8 +24,13 @@ const LoginSection = () => {
       <div className="container grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
           <p className="kicker mb-6">Kojima / Analyst entry</p>
-          <h1 className="section-heading">Return to the bigger picture.</h1>
-          <p className="text-muted-foreground mt-6 max-w-lg text-lg">
+          <h1 {...anim({ animation: "decode" })} className="section-heading">
+            Return to the bigger picture.
+          </h1>
+          <p
+            {...anim({ animation: "fade-up", delay: 150 })}
+            className="text-muted-foreground mt-6 max-w-lg text-lg"
+          >
             A workspace concept for the analysts connecting geopolitical
             developments to business decisions.
           </p>
@@ -42,7 +48,10 @@ const LoginSection = () => {
             <a href="/contact">Prepare an access inquiry</a>
           </Button>
         </div>
-        <Card className="rounded-none shadow-none">
+        <Card
+          {...anim({ animation: "fade-up" })}
+          className="rounded-none shadow-none"
+        >
           <CardHeader>
             <p className="technical-label">Local form / Sign-in</p>
             <h2 className="text-2xl">Preview sign-in.</h2>

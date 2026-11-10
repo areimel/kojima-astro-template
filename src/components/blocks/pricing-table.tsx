@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { anim } from "@/lib/animations/attributes";
 
 const rows = [
   ["Monitoring topics", "5", "25", "100"],
@@ -24,7 +25,11 @@ export const PricingTable = () => (
       <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="kicker mb-4">Scope / Plan comparison</p>
-          <h2 id="comparison-title" className="text-3xl md:text-4xl">
+          <h2
+            {...anim({ animation: "scan-wipe" })}
+            id="comparison-title"
+            className="text-3xl md:text-4xl"
+          >
             Match the scope of your work.
           </h2>
         </div>
@@ -52,7 +57,9 @@ export const PricingTable = () => (
               ))}
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody
+            {...anim({ animation: "counter", children: "tr:nth-child(5) td" })}
+          >
             {rows.map(([label, ...values]) => (
               <TableRow key={label}>
                 <TableHead scope="row" className="py-5">

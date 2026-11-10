@@ -4,6 +4,7 @@
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { anim } from "@/lib/animations/attributes";
 import { cn } from "@/lib/utils";
 
 const categories = [
@@ -83,10 +84,16 @@ export const FAQ = ({
             <p className="text-muted-foreground font-mono text-xs tracking-widest uppercase">
               Kojima / Briefing notes
             </p>
-            <Heading className="text-4xl tracking-tight md:text-5xl">
+            <Heading
+              {...anim({ animation: "decode" })}
+              className="text-4xl tracking-tight md:text-5xl"
+            >
               Understand the working picture.
             </Heading>
-            <p className="text-muted-foreground max-w-md leading-relaxed">
+            <p
+              {...anim({ animation: "fade-up", delay: 150 })}
+              className="text-muted-foreground max-w-md leading-relaxed"
+            >
               The product concept, the boundaries of this demo, and how to adapt
               the template.
             </p>
@@ -97,7 +104,10 @@ export const FAQ = ({
               About Kojima
             </a>
           </div>
-          <div className="grid gap-8 text-start">
+          <div
+            {...anim({ animation: "boot-stagger", children: ":scope > div" })}
+            className="grid gap-8 text-start"
+          >
             {categories.map((category, categoryIndex) => (
               <div key={category.title}>
                 <h3 className="text-muted-foreground border-border border-b py-4 font-mono text-xs tracking-widest uppercase">

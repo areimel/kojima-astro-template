@@ -1,12 +1,16 @@
 import { ArrowUpRight } from "lucide-react";
 
 import { MAIN_NAV } from "@/consts";
+import { anim } from "@/lib/animations/attributes";
 
 export function Footer() {
   return (
     <footer className="bg-background text-foreground border-border mt-20 border-t">
       <div className="mx-auto max-w-[1600px] px-5 pt-10 md:px-10">
-        <div className="flex flex-col justify-between gap-8 md:flex-row">
+        <div
+          {...anim({ animation: "fade-up" })}
+          className="flex flex-col justify-between gap-8 md:flex-row"
+        >
           <div>
             <p className="text-primary font-mono text-[10px] tracking-[0.16em] uppercase">
               Private intelligence / A clearer operating picture
