@@ -10,6 +10,8 @@ export default defineConfig({
     viewport: { width: 1440, height: 1000 },
     channel: process.env.PLAYWRIGHT_CHANNEL || (process.platform === "win32" ? "msedge" : undefined),
     trace: "retain-on-failure",
+    // Software WebGL for the EncomGlobe canvas in headless runs.
+    launchOptions: { args: ["--enable-unsafe-swiftshader", "--use-angle=swiftshader"] },
   },
   webServer: {
     command: "pnpm run build && pnpm run preview --ignore-lock --host 127.0.0.1 --port 4322",
