@@ -1,5 +1,5 @@
 import { Group, Sprite, SpriteMaterial } from "three";
-import type { CanvasTexture, Object3D } from "three";
+import type { Object3D } from "three";
 
 import type { Marker } from "../../schema";
 import type { EngineContext, FrameContext, GlobeItem, Label, MarkersLayer, Palette } from "../types";
@@ -12,9 +12,10 @@ import {
   updateMarkerArc,
 } from "./marker-arc";
 import type { MarkerArc } from "./marker-arc";
-import { elasticOut, progress } from "../utils/animate";
+import { elasticOut, isSettled, progress } from "../utils/animate";
 import { ringDotTexture } from "../utils/canvas";
 import { GLOBE_RADIUS, isFacingCamera, latLngToVector3 } from "../utils/geo";
+import { createRefCache } from "../utils/ref-cache";
 
 const SPRITE_ALTITUDE = 1.2;
 const SPRITE_SIZE = 50;
@@ -38,28 +39,15 @@ export function createMarkersLayer(ctx: EngineContext): MarkersLayer {
   let palette: Palette = ctx.palette;
   const entries = new Map<string, Entry>(); // insertion order = add order (FIFO)
   const arcs: MarkerArc[] = [];
-  const textures = new Map<string, CanvasTexture>();
+  const textures = createRefCache(ringDotTexture, (t) => t.dispose());
   let hoveredId: string | null = null;
   let lastId: string | null = null;
 
   const colorOf = (m: Marker) => m.color ?? palette.marker;
-  const textureFor = (color: string) => {
-    let t = textures.get(color);
-    if (!t) textures.set(color, (t = ringDotTexture(color)));
-    return t;
-  };
-  const purgeTextures = () => {
-    const used = new Set([...entries.values()].map((e) => e.color));
-    for (const [color, t] of textures) {
-      if (!used.has(color)) {
-        t.dispose();
-        textures.delete(color);
-      }
-    }
-  };
 
   const dropEntry = (entry: Entry) => {
     entry.sprite.material.dispose(); // texture is shared; owned by the cache
+    textures.release(entry.color);
     entry.sprite.removeFromParent();
     entry.label.dispose();
   };
@@ -81,7 +69,6 @@ export function createMarkersLayer(ctx: EngineContext): MarkersLayer {
         arc.retractAt = now;
       }
     }
-    purgeTextures();
   }
 
   function add(marker: Marker) {
@@ -91,7 +78,7 @@ export function createMarkersLayer(ctx: EngineContext): MarkersLayer {
     const color = colorOf(marker);
 
     const sprite = new Sprite(
-      new SpriteMaterial({ map: textureFor(color), opacity: 0.7, depthTest: true, fog: true }),
+      new SpriteMaterial({ map: textures.acquire(color), opacity: 0.7, depthTest: true, fog: true }),
     );
     sprite.scale.set(0, 0, 1);
     sprite.position.copy(latLngToVector3(marker.lat, marker.lng, GLOBE_RADIUS * SPRITE_ALTITUDE));
@@ -149,7 +136,7 @@ export function createMarkersLayer(ctx: EngineContext): MarkersLayer {
     items: () => [...entries.values()].map((e) => e.marker),
 
     update(frame: FrameContext) {
-      const reduced = frame.reducedMotion || !ctx.config.intro;
+      const reduced = isSettled(frame, ctx.config);
       const t = frame.time;
       for (const entry of entries.values()) {
         const k = reduced ? 1 : elasticOut(progress(t, entry.bornAt + entry.popDelay, SCALE_TIME));
@@ -170,12 +157,13 @@ export function createMarkersLayer(ctx: EngineContext): MarkersLayer {
       palette = next;
       for (const entry of entries.values()) {
         if (entry.marker.color !== undefined) continue;
+        const prev = entry.color;
         entry.color = next.marker;
-        entry.sprite.material.map = textureFor(next.marker);
+        entry.sprite.material.map = textures.acquire(next.marker);
+        textures.release(prev);
         entry.sprite.material.needsUpdate = true;
       }
       for (const arc of arcs) if (arc.usesDefaultColor) setArcColor(arc, next.marker);
-      purgeTextures();
     },
 
     pickables: () => [...entries.values()].map((e) => e.sprite as Object3D),
@@ -194,7 +182,6 @@ export function createMarkersLayer(ctx: EngineContext): MarkersLayer {
 
     dispose() {
       clear();
-      for (const t of textures.values()) t.dispose();
       textures.clear();
       group.removeFromParent();
     },

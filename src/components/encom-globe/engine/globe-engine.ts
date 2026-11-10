@@ -1,9 +1,12 @@
-import { Color, Fog, Object3D, Scene, Vector3, WebGLRenderer, SRGBColorSpace } from "three";
-import { CSS2DObject, CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
+import { Color, Fog, Scene, Vector3, WebGLRenderer, SRGBColorSpace } from "three";
+import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 
 import "../encom-globe.css";
 import type { GlobeConfig } from "../schema";
 import { CameraRig } from "./camera-rig";
+import { applyContainerPalette, prepareContainer } from "./container-style";
+import { createLabel } from "./label";
+import { createScheduler } from "./scheduler";
 import type {
   EngineContext,
   FrameContext,
@@ -29,11 +32,6 @@ export interface GlobeEngineOptions {
   reducedMotion: boolean;
 }
 
-interface Scheduled {
-  at: number;
-  fn: () => void;
-}
-
 const MAX_DELTA_MS = 100;
 
 export class GlobeEngine {
@@ -45,7 +43,7 @@ export class GlobeEngine {
 
   private readonly layers: GlobeLayer[] = [];
   private readonly handlers = new Map<GlobeEvent, Set<GlobeEventHandler>>();
-  private queue: Scheduled[] = [];
+  private readonly scheduler = createScheduler();
   private time = 0;
   private lastStamp: number | null = null;
   private running = false;
@@ -57,7 +55,7 @@ export class GlobeEngine {
   private cameraPosition = new Vector3();
   private readonly resizeObserver: ResizeObserver;
   private readonly intersectionObserver?: IntersectionObserver;
-  private readonly prevContainerStyle: { position: string; overflow: string; contain: string };
+  private readonly restoreContainer: () => void;
   private state: { config: GlobeConfig; palette: Palette; reducedMotion: boolean };
 
   static create(container: HTMLElement, opts: GlobeEngineOptions): GlobeEngine {
@@ -84,12 +82,7 @@ export class GlobeEngine {
     ld.setAttribute("aria-hidden", "true");
     Object.assign(ld.style, { position: "absolute", inset: "0", pointerEvents: "none", overflow: "hidden" });
 
-    this.prevContainerStyle = {
-      position: container.style.position,
-      overflow: container.style.overflow,
-      contain: container.style.contain,
-    };
-    Object.assign(container.style, { position: "relative", overflow: "hidden", contain: "paint" });
+    this.restoreContainer = prepareContainer(container);
     container.append(r.domElement, ld);
 
     this.rig = new CameraRig(container, opts.config);
@@ -110,8 +103,8 @@ export class GlobeEngine {
         return self.state.reducedMotion;
       },
       now: () => this.time,
-      schedule: (delayMs, fn) => this.schedule(delayMs, fn),
-      addLabel: (parent, text, position, className) => this.addLabel(parent, text, position, className),
+      schedule: (delayMs, fn) => this.scheduler.schedule(this.time, delayMs, fn),
+      addLabel: createLabel,
     };
 
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -226,15 +219,12 @@ export class GlobeEngine {
     for (const l of this.layers.splice(0)) l.dispose();
     disposeObject(this.scene);
     this.handlers.clear();
-    this.queue = [];
+    this.scheduler.clear();
     this.renderer.dispose();
     this.renderer.forceContextLoss();
     this.renderer.domElement.remove();
     this.labelRenderer.domElement.remove();
-    Object.assign(this.container.style, this.prevContainerStyle);
-    for (const k of ["--encom-label", "--encom-marker", "--encom-pin", "--encom-fog"]) {
-      this.container.style.removeProperty(k);
-    }
+    this.restoreContainer();
   }
 
   // ---- internals ----
@@ -242,45 +232,7 @@ export class GlobeEngine {
   private applyPaletteBasics(p: Palette): void {
     if (p.background === null) this.renderer.setClearColor(new Color(0x000000), 0);
     else this.renderer.setClearColor(new Color(p.background), 1);
-    const s = this.container.style;
-    s.setProperty("--encom-label", p.label);
-    s.setProperty("--encom-marker", p.marker);
-    s.setProperty("--encom-pin", p.pin);
-    s.setProperty("--encom-fog", p.fog);
-  }
-
-  private schedule(delayMs: number, fn: () => void): void {
-    const item = { at: this.time + Math.max(0, delayMs), fn };
-    // Insert after any entries with the same or earlier time (stable, sorted).
-    let i = this.queue.length;
-    while (i > 0 && this.queue[i - 1].at > item.at) i--;
-    this.queue.splice(i, 0, item);
-  }
-
-  private addLabel(parent: Object3D, text: string, position: Vector3, className?: string): Label {
-    const element = document.createElement("div");
-    element.className = className ? `encom-globe__label ${className}` : "encom-globe__label";
-    element.textContent = text;
-    const object = new CSS2DObject(element);
-    object.position.copy(position);
-    parent.add(object);
-    return {
-      object,
-      element,
-      setText: (t) => {
-        element.textContent = t;
-      },
-      setOpacity: (o) => {
-        element.style.opacity = String(o);
-      },
-      setVisible: (v) => {
-        object.visible = v;
-      },
-      dispose: () => {
-        object.removeFromParent();
-        element.remove();
-      },
-    };
+    applyContainerPalette(this.container, p);
   }
 
   private readonly sync = (): void => {
@@ -304,7 +256,7 @@ export class GlobeEngine {
   };
 
   private step(delta: number): void {
-    while (this.queue.length && this.queue[0].at <= this.time) this.queue.shift()?.fn();
+    this.scheduler.flush(this.time);
     this.rig.update(delta, this.time, this.state.reducedMotion);
     this.cameraPosition.copy(this.rig.camera.position);
     const frame: FrameContext = {

@@ -9,6 +9,7 @@ import {
 
 import type { EngineContext, FrameContext, GlobeLayer, Palette } from "../types";
 import { mulberry32 } from "./tile-shades";
+import { isSettled } from "../utils/animate";
 import { latLngToVector3 } from "../utils/geo";
 
 /**
@@ -59,9 +60,7 @@ export function createIntroLinesLayer(ctx: EngineContext): GlobeLayer {
     object: root,
     update(frame: FrameContext) {
       const t = introLinesDuration > 0 ? frame.time / introLinesDuration : 1;
-      const active =
-        !frame.reducedMotion && ctx.config.intro && 
-        introLinesCount > 0 && t < 1;
+      const active = !isSettled(frame, ctx.config) && introLinesCount > 0 && t < 1;
       root.visible = active;
       if (!active) return;
       // original: ramps in over the first 10%, fades out over the last 20%

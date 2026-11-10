@@ -21,7 +21,7 @@ import type {
 } from "../types";
 import { createPinAssetCache, type PinAssets } from "./pin-assets";
 import { type CollisionNode, resolveCollision } from "./pin-collision";
-import { elasticOut, progress, sampleTween, tween, type Tween } from "../utils/animate";
+import { elasticOut, isSettled, progress, sampleTween, tween, type Tween } from "../utils/animate";
 import { isFacingCamera, latLngToVector3 } from "../utils/geo";
 
 const RISE_MS = 1500;
@@ -67,9 +67,6 @@ export function createPinsLayer(ctx: EngineContext, smoke: SmokeLayer | null): P
   let defaultColor = ctx.palette.pin;
   let cameraPosition: Vector3 | null = null;
   let hoveredId: string | null = null;
-
-  const instant = (frame?: Pick<FrameContext, "reducedMotion">) =>
-    (frame?.reducedMotion ?? ctx.reducedMotion) || !ctx.config.intro;
 
   const altitudeOf = (e: PinEntry, time: number) => sampleTween(e.alt, time);
 
@@ -178,7 +175,7 @@ export function createPinsLayer(ctx: EngineContext, smoke: SmokeLayer | null): P
       e.label.setOpacity(0);
       if (smoke) e.smoke = smoke.setFire(pin.lat, pin.lng, target);
     }
-    layout(e, instant() ? target : 1);
+    layout(e, isSettled(ctx, ctx.config) ? target : 1);
     entries.set(pin.id, e);
 
     const outcome = resolveCollision(e.node, nodes(), now);
@@ -204,7 +201,7 @@ export function createPinsLayer(ctx: EngineContext, smoke: SmokeLayer | null): P
 
   function update(frame: FrameContext) {
     cameraPosition = frame.cameraPosition;
-    const skip = instant(frame);
+    const skip = isSettled(frame, ctx.config);
     for (const e of entries.values()) {
       const t = frame.time;
       const alt = skip ? e.targetAlt : altitudeOf(e, t);

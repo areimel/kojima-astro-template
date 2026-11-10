@@ -53,3 +53,14 @@ export function sampleTween(t: Tween, time: number): number {
 export function tweenDone(t: Tween, time: number): boolean {
   return time >= t.start + t.duration;
 }
+
+/**
+ * True when animations should be skipped and the settled end state shown:
+ * reduced motion, or the intro is disabled in the config.
+ */
+export function isSettled(
+  frame: { reducedMotion: boolean },
+  config: { intro: boolean },
+): boolean {
+  return frame.reducedMotion || !config.intro;
+}

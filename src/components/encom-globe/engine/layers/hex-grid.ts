@@ -15,6 +15,7 @@ import {
 import { hexGridFragment, hexGridVertex } from "../shaders/hex-grid.glsl";
 import type { EngineContext, FrameContext, GlobeLayer, GridFile, Palette } from "../types";
 import { mulberry32, tileShades } from "./tile-shades";
+import { isSettled } from "../utils/animate";
 import { GLOBE_RADIUS, latLngToVector3 } from "../utils/geo";
 
 /** hexasphere(500, 35, 0.45) circumradius, used when the grid lacks `tileRadius`. */
@@ -124,7 +125,7 @@ export function createHexGridLayer(ctx: EngineContext, grid: GridFile): GlobeLay
     name: "grid",
     object: root,
     update(frame: FrameContext) {
-      const settled = frame.reducedMotion || !ctx.config.intro;
+      const settled = isSettled(frame, ctx.config);
       material.uniforms.currentTime.value = settled ? SETTLED_TIME : frame.time;
     },
     setPalette: applyPalette,

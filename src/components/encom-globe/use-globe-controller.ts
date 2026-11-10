@@ -11,6 +11,10 @@ export interface UseGlobeControllerOptions {
   data: GlobeData;
   palette: Palette;
   reducedMotion: boolean;
+  /** Stable change-detection keys (e.g. JSON strings) computed once by the caller. */
+  configKey: string;
+  dataKey: string;
+  paletteKey: string;
   /** Hold off creating the controller until inputs (e.g. the live palette) are resolved. */
   enabled?: boolean;
   onSelect?: GlobeEventHandler;
@@ -29,9 +33,7 @@ export function useGlobeController(options: UseGlobeControllerOptions) {
   const latest = useRef(options);
   latest.current = options;
 
-  const configKey = JSON.stringify(options.config);
-  const dataKey = JSON.stringify(options.data);
-  const paletteKey = JSON.stringify(options.palette);
+  const { configKey, dataKey, paletteKey } = options;
   const applied = useRef({ configKey, dataKey, paletteKey, reduced: options.reducedMotion });
 
   useEffect(() => {
@@ -47,9 +49,9 @@ export function useGlobeController(options: UseGlobeControllerOptions) {
         if (cancelled) return;
         const o = latest.current;
         applied.current = {
-          configKey: JSON.stringify(o.config),
-          dataKey: JSON.stringify(o.data),
-          paletteKey: JSON.stringify(o.palette),
+          configKey: o.configKey,
+          dataKey: o.dataKey,
+          paletteKey: o.paletteKey,
           reduced: o.reducedMotion,
         };
         const c = await Controller.create(el, {

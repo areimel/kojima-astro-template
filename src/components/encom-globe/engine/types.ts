@@ -149,5 +149,6 @@ export type MarkersLayer = CollectionLayer<Marker>;
 
 export interface SatellitesLayer extends CollectionLayer<Satellite> {
   addConstellation(constellation: Constellation): void;
+  removeConstellation(id: string): void;
   setConstellations(constellations: Constellation[]): void;
 }

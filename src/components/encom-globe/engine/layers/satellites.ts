@@ -33,7 +33,6 @@ const HOVER_SCALE = 1.25;
 export function createSatellitesLayer(ctx: EngineContext): SatellitesLayer {
   const object = new Group();
   object.name = "satellites";
-  ctx.scene.add(object);
 
   let palette = ctx.palette;
   const satellites = new Map<string, Satellite>();
@@ -42,6 +41,7 @@ export function createSatellitesLayer(ctx: EngineContext): SatellitesLayer {
   const entries = new Map<string, Entry>();
   const byOwner = new Map<string, string[]>();
   let hoveredId: string | null = null;
+  const done = new Set<SatelliteSprite>();
 
   const acquire = (style: SatelliteStyle) =>
     createSatelliteSprite({
@@ -159,6 +159,10 @@ export function createSatellitesLayer(ctx: EngineContext): SatellitesLayer {
     },
     items: () => [...satellites.values()],
     addConstellation,
+    removeConstellation(id) {
+      if (!constellations.delete(id)) return;
+      removeOwner(id);
+    },
     setConstellations(list) {
       for (const id of [...constellations.keys()]) layer.remove(id);
       list.forEach(addConstellation);
@@ -169,7 +173,7 @@ export function createSatellitesLayer(ctx: EngineContext): SatellitesLayer {
       const cameraAngle = Math.atan2(cam.z, cam.x);
 
       // One frame index per shared sheet, so all satellites using it stay in sync.
-      const done = new Set<SatelliteSprite>();
+      done.clear();
       for (const e of entries.values()) {
         if (!done.has(e.sprite)) {
           done.add(e.sprite);

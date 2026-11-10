@@ -2,6 +2,7 @@ import type { CanvasTexture, Texture } from "three";
 import { RepeatWrapping } from "three";
 
 import { canvasTexture, renderToCanvas } from "../utils/canvas";
+import { createRefCache } from "../utils/ref-cache";
 
 /** Sprite-sheet geometry, identical to the original Satellite.js. */
 export const SAT_FRAMES = 50;
@@ -144,7 +145,21 @@ function drawSheet(
   }
 }
 
-const cache = new Map<string, { sprite: SatelliteSprite; refs: number }>();
+const cache = createRefCache<string, SatelliteSprite>(
+  (key) => {
+    const [waves, waveColor, coreColor, shieldColor] = key.split("|");
+    const numWaves = Number(waves);
+    const canvas = renderToCanvas(
+      (SAT_FRAMES * SAT_PIXELS) / SAT_ROWS,
+      SAT_PIXELS * SAT_ROWS,
+      (ctx) => drawSheet(ctx, numWaves, waveColor, coreColor, shieldColor),
+    );
+    const texture = canvasTexture(canvas);
+    applyFrame(texture, 0);
+    return { canvas, texture, frames: SAT_FRAMES, repeatAt: computeRepeatAt(numWaves), key };
+  },
+  (sprite) => sprite.texture.dispose(),
+);
 
 /**
  * Get (or build) the shared sprite sheet for these options. Every call must
@@ -153,35 +168,9 @@ const cache = new Map<string, { sprite: SatelliteSprite; refs: number }>();
  */
 export function createSatelliteSprite(opts: SatelliteSpriteOptions): SatelliteSprite {
   const numWaves = opts.numWaves ?? 8;
-  const key = [numWaves, opts.waveColor, opts.coreColor, opts.shieldColor].join("|");
-  const hit = cache.get(key);
-  if (hit) {
-    hit.refs++;
-    return hit.sprite;
-  }
-  const canvas = renderToCanvas(
-    (SAT_FRAMES * SAT_PIXELS) / SAT_ROWS,
-    SAT_PIXELS * SAT_ROWS,
-    (ctx) => drawSheet(ctx, numWaves, opts.waveColor, opts.coreColor, opts.shieldColor),
-  );
-  const texture = canvasTexture(canvas);
-  applyFrame(texture, 0);
-  const sprite: SatelliteSprite = {
-    canvas,
-    texture,
-    frames: SAT_FRAMES,
-    repeatAt: computeRepeatAt(numWaves),
-    key,
-  };
-  cache.set(key, { sprite, refs: 1 });
-  return sprite;
+  return cache.acquire([numWaves, opts.waveColor, opts.coreColor, opts.shieldColor].join("|"));
 }
 
 export function releaseSatelliteSprite(sprite: SatelliteSprite): void {
-  const hit = cache.get(sprite.key);
-  if (!hit || hit.sprite !== sprite) return;
-  if (--hit.refs <= 0) {
-    hit.sprite.texture.dispose();
-    cache.delete(sprite.key);
-  }
+  cache.release(sprite.key);
 }

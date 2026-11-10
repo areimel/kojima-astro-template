@@ -57,8 +57,14 @@ export function isFacingCamera(
   cameraPosition: Vector3,
   threshold = 0,
 ): boolean {
-  const toCamera = cameraPosition.clone().sub(point).normalize();
-  return point.clone().normalize().dot(toCamera) > threshold;
+  // dot(normalize(point), normalize(camera - point)) without allocating.
+  const tx = cameraPosition.x - point.x;
+  const ty = cameraPosition.y - point.y;
+  const tz = cameraPosition.z - point.z;
+  const pl = Math.hypot(point.x, point.y, point.z);
+  const tl = Math.hypot(tx, ty, tz);
+  if (pl === 0 || tl === 0) return false;
+  return (point.x * tx + point.y * ty + point.z * tz) / (pl * tl) > threshold;
 }
 
 export interface ArcPathPoint extends LatLng {
