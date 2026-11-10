@@ -38,3 +38,27 @@
 8. `5838556` � Landing page and instrument controls.
 9. `31b5964` � Route integration, assets, and accessibility fixes.
 10. Final verification, test tooling, and documentation.
+
+# Animation system (Anime.js)
+
+## Confirmed direction
+
+- Attribute-driven presets: `data-animation`, `data-desktop-animation`, `data-mobile-animation` (+ `data-anim-*` tuning).
+- Glitchy, techy spy-agency presets: text decode, glitch reveals, scan/wipe reveals, ambient + hover loops.
+- Moderate application; scroll-once by default; mobile inherits desktop unless overridden (`none` disables).
+- Reduced motion and no-JS keep all content visible; hydration-safe with React islands.
+
+## TODO
+
+- [x] Install animejs v4 and define shared contracts (types, config, registry).
+- [ ] Engine, attribute parsing, `anim()` helper, head wiring, base CSS.
+- [ ] Text presets (decode, typewriter).
+- [ ] Glitch presets (glitch-in, slice, flicker-in).
+- [ ] Reveal presets (fade-up, scan-wipe, redact, boot-stagger).
+- [ ] Ambient/hover presets (blink, pulse, flicker, counter, glitch-hover).
+- [ ] Animation lab on /components.
+- [ ] Apply to homepage.
+- [ ] Apply to secondary pages, navbar, footer.
+- [ ] Documentation (docs/animations.md).
+- [ ] Playwright animation tests + full verification.
+- [ ] Code review fixes.
