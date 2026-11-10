@@ -91,14 +91,35 @@ Design + plan: `docs/superpowers/specs/2026-11-10-encom-globe-design.md`.
 
 ## TODO
 
-- [ ] Design doc, deps, shared contracts (types, schema, geo/animate/canvas/dispose utils).
-- [ ] Hex grid generator + hex-grid / intro-lines layers.
-- [ ] Engine core, camera rig (orbit, drag, flyTo), picking, atmosphere.
-- [ ] Pins + smoke layers.
-- [ ] Markers + arcs layer.
-- [ ] Satellites + constellations layer.
-- [ ] Shared hooks (reduced motion, dark), PanelHeading extraction, demo datasets.
-- [ ] `EncomGlobe` React component, presets/palette, HUD frame, fallbacks.
-- [ ] `/globe-demo` page + footer link.
-- [ ] Unit + e2e tests.
-- [ ] `docs/globe.md`, review fixes, final verification.
+- [x] Design doc, deps, shared contracts (types, schema, geo/animate/canvas/dispose utils).
+- [x] Hex grid generator + hex-grid / intro-lines layers.
+- [x] Engine core, camera rig (orbit, drag, flyTo), picking, atmosphere.
+- [x] Pins + smoke layers.
+- [x] Markers + arcs layer.
+- [x] Satellites + constellations layer.
+- [x] Shared hooks (reduced motion, dark), PanelHeading extraction, demo datasets.
+- [x] `EncomGlobe` React component, presets/palette, HUD frame, fallbacks.
+- [x] `/globe-demo` page + footer link.
+- [x] Unit + e2e tests.
+- [x] `docs/globe.md`, review fixes, final verification.
+
+## EncomGlobe commit timeline
+
+1. Design doc and plan.
+2. three r187, vitest, shared contracts (schema, types, geo/animate/canvas/dispose).
+3. Engine-clock `schedule()` contract.
+4. Shared hooks (`useIsDark`, `useReducedMotion`) and `PanelHeading` extraction.
+5. Markers + animated arcs layer.
+6. Satellites + constellations layer.
+7. Demo datasets and preset configs.
+8. Pins + smoke layers.
+9. Engine core, camera rig (orbit/drag/flyTo), picking, atmosphere.
+10. Hex-grid generator, hex tiles, intro lines.
+11. `GlobeController` wiring.
+12. Software WebGL for headless Playwright.
+13. `EncomGlobe` React component, presets, HUD frame.
+14. `docs/globe.md`.
+15. `/globe-demo` page (+ ambient gallery instance).
+16. Code review fixes.
+17. Globe e2e suite; animation-lab deflake.
+18. Docs and verification record.

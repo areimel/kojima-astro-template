@@ -20,7 +20,7 @@ The component must be reusable many times per site with per-instance data (JSON 
 - **Hex grid:** regenerate rather than ship the original 962 KB `grid.js`. A build script runs `hexasphere.js(radius, 35, .45)`, the same parameters as the original's `bin/buildgrid`, against Natural Earth `land-110m` (public domain, via `world-atlas`). It keeps tiles with land coverage > .1, sized by coverage like the original. Output is `public/globe/hex-grid.json` with `[lat, lng, size, rotation]` per tile (~4k tiles, ~60 KB, ~20 KB gzipped). Runtime draws one `InstancedMesh` (one draw call); the intro is driven by an instanced `lng` attribute in the shader.
 - **Labels:** `CSS2DRenderer` DOM labels in the site mono font. They're crisp, theme-styled through CSS tokens and easy to hover. Labels are hidden on the back side by a dot-product test (the original's fog does this). They're collision-thinned like the original's quadtree, using an angular-distance check with no dependency. Pin tops, marker rings and satellites stay canvas sprites, as in the original.
 - **Animation:** no tween.js. A tiny time-based `animate(from, to, duration, ease)` helper, with `elasticOut` ported from tween.js easing. All animation runs off the engine clock.
-- **Coordinates:** the three-globe `polar2Cartesian` convention (Y up) is used everywhere: grid script, pins, arcs and flyTo.
+- **Coordinates:** *(changed during implementation)* the original encom-globe `mapPoint` convention (Y up, θ = 180 − lng) is used everywhere — grid script, pins, arcs and flyTo — so ported math stays literal (`engine/utils/geo.ts`).
 - **Reduced motion:** no auto-rotate, the intro is skipped (tiles shown settled), smoke is hidden and satellites freeze on one frame. Drag and select still work. The globe reacts to live media-query changes.
 - **Fallbacks:** without WebGL (or with JS off), a static styled placeholder shows the HUD frame and a "3D view unavailable" note, and the pin list stays in a visually-hidden `<ul>` for screen readers.
 - **Performance:** one WebGL context per instance. Each instance:
@@ -232,3 +232,10 @@ Parent commits as the work lands:
    - check reduced-motion emulation.
 3. `pnpm test:e2e` passes: the existing suites plus the new globe spec with axe at zero violations.
 4. Check that every new file is ≤ ~300–400 lines (`wc -l`) and that `git log` shows ≥10 descriptive commits.
+
+## Implementation notes (2026-11-10)
+
+- Coordinates use the original `mapPoint` convention instead of three-globe's (see above).
+- Islands use `client:load` and lazy-start via IntersectionObserver; the sandbox page was removed once `/globe-demo` existed.
+- The original has no drones and no atmosphere; drones were dropped, atmosphere is optional (off by default).
+- Hover/select picking has no e2e coverage yet (`test.fixme` in `tests/globe.spec.ts`).

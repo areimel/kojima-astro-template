@@ -279,6 +279,9 @@ Events: a pointer hover on an item calls `onHover`, and a click within 5 px call
 
 ## Accessibility and robustness
 
+The `<figure>` exposes `data-status` (`idle | loading | ready | unsupported | error`) for styling and tests; `ready` means every layer has been built.
+
+
 - **Reduced motion.** When `(prefers-reduced-motion: reduce)` matches, the globe:
   - does not auto-rotate,
   - skips the intro and shows tiles settled,

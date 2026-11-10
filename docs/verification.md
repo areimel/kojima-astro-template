@@ -47,3 +47,20 @@ Upgraded astro 5.18.2 → 6.4.8 → 7.4.7 one major at a time, with integrations
 - `compressHTML: true` keeps the Astro 6 whitespace behavior. Astro 7 defaults to `"jsx"`, so audit inline-element spacing before switching.
 - The Playwright web server passes `--ignore-lock` to `astro preview`. Astro 7 auto-backgrounds `preview` and `dev` when an AI agent runs the CLI, and Playwright would treat that as an early exit.
 - Follow-up: the latest eslint-plugin-astro and astro-eslint-parser (3.x) require ESLint 10. The current ESLint 8 toolchain still parses `.astro` files correctly.
+
+## EncomGlobe (2026-11-10)
+
+- `pnpm check`, `pnpm test:unit` (66 vitest tests) and `pnpm build` pass. ESLint is clean for every file added or changed in this work. The four remaining `import/order` errors in `src/content.config.ts`, `src/pages/404.astro`, `src/pages/index.astro` and `tests/kojima.spec.ts` were there before and are untouched.
+- `pnpm test:e2e`: 58 passed and 1 skipped, on three consecutive runs on Linux Chromium with SwiftShader WebGL.
+  - The skipped test is the `fixme` for hover/select picking.
+  - `/globe-demo` runs through the axe (wcag2a/2aa/21aa) and overflow checks in both dark and light, and through the console sweep.
+- The globe spec runs as its own Playwright project after the site suite, because software WebGL is CPU-heavy and was starving the timing-sensitive animation-lab test.
+- I compared the result by eye against https://www.robscanlon.com/encom-globe/ with the `encom` preset, and found a close match:
+  - tile sweep;
+  - pin lines and tops;
+  - arcs;
+  - white/red satellites;
+  - far-side fog.
+- Boundaries:
+  - Hover and click picking is only checked manually, through the event log in the demo playground.
+  - Every globe needs its own WebGL context, and browsers limit how many can be open at once (about 16). The demo page uses 8.
