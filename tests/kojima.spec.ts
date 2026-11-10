@@ -15,6 +15,9 @@ for (const theme of ["dark", "light"]) {
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
       await page.addInitScript((value) => localStorage.setItem("theme", value), theme);
+      // Entrance animations leave elements at partial opacity for a moment; reduced motion
+      // shows final states so axe checks what users see once content has settled.
+      await page.emulateMedia({ reducedMotion: "reduce" });
       const response = await open(page, route === "/404" ? "/__missing_kojima_route__" : route);
       expect(response?.status()).toBe(route === "/404" ? 404 : 200);
       await expect(page.locator("main h1")).toHaveCount(1);
