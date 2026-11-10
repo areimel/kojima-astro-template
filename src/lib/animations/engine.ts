@@ -49,6 +49,27 @@ let safetyTimer = 0;
 const root = () => document.documentElement;
 const inUnhydratedIsland = (el: Element) => !!el.closest("astro-island[ssr]");
 
+const HYDRATION_WAIT_MS = 1500;
+const firstSeen = new WeakMap<Element, number>();
+const hasFiber = (node: object) =>
+  Object.keys(node).some((key) => key.startsWith("__reactFiber$"));
+
+/**
+ * Astro removes `ssr` as soon as it calls hydrateRoot(), but React hydrates
+ * asynchronously. Rewriting text before React claims it causes hydration error
+ * #418, so React islands wait until the element's subtree has been claimed
+ * (or a timeout passes, so a stalled island never blocks the animation).
+ */
+function awaitingReactHydration(el: HTMLElement) {
+  const island = el.closest("astro-island");
+  if (!island || !Object.keys(island).some((k) => k.startsWith("__reactContainer$")))
+    return false;
+  const start = firstSeen.get(el) ?? performance.now();
+  firstSeen.set(el, start);
+  if (performance.now() - start > HYDRATION_WAIT_MS) return false;
+  return ![el, ...el.querySelectorAll("*")].every(hasFiber);
+}
+
 function showTargets(targets: HTMLElement[]) {
   for (const t of targets) {
     t.removeAttribute(ATTR.pending);
@@ -165,10 +186,16 @@ function arm(el: HTMLElement) {
 function scan() {
   scanFrame = 0;
   if (reduced) return;
+  let deferred = false;
   for (const el of document.querySelectorAll<HTMLElement>(ANIMATED_SELECTOR)) {
     if (el.hasAttribute(ATTR.state) || inUnhydratedIsland(el)) continue;
+    if (awaitingReactHydration(el)) {
+      deferred = true;
+      continue;
+    }
     arm(el);
   }
+  if (deferred) scheduleScan();
   window.clearTimeout(safetyTimer);
   safetyTimer = window.setTimeout(releaseStuck, SAFETY_NET_MS);
 }
