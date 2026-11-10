@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { LAB_FAMILIES, type LabPreset } from './animation-lab-data';
 
+import { PanelHeading } from '@/components/kojima/panel-heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,8 +10,6 @@ import { anim } from '@/lib/animations/attributes';
 import { registry } from '@/lib/animations/registry';
 import type { AnimationTrigger } from '@/lib/animations/types';
 
-
-const meta = 'font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground';
 
 function mobileLabel(name: LabPreset['name']) {
   const fallback = registry[name].mobileFallback;
@@ -76,10 +75,7 @@ function PresetCard({ preset }: { preset: LabPreset }) {
 export function AnimationLab() {
   return (
     <section className="mt-8 border border-border" aria-label="Animation lab">
-      <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border px-5 py-4 sm:px-7">
-        <h2 className="text-sm font-medium"><span className="mr-4 font-mono text-primary">04</span>Animation lab</h2>
-        <span className={meta}>Anime.js / data attributes</span>
-      </div>
+      <PanelHeading number="04" title="Animation lab" detail="Anime.js / data attributes" />
       <div className="space-y-8 p-5 sm:p-7">
         <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
           Every preset, live. Elements opt in with <code className="font-mono text-foreground">data-animation</code>, and can override per

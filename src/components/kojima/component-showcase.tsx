@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { AnimationLab } from '@/components/kojima/animation-lab';
+import { meta, PanelHeading } from '@/components/kojima/panel-heading';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,16 +14,6 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const defaults = { title: 'Regional briefing', density: 'comfortable', annotations: true, scale: 48 };
-const meta = 'font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground';
-
-function PanelHeading({ number, title, detail }: { number: string; title: string; detail: string }) {
-  return (
-    <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border px-5 py-4 sm:px-7">
-      <h2 className="text-sm font-medium"><span className="mr-4 font-mono text-primary">{number}</span>{title}</h2>
-      <span className={meta}>{detail}</span>
-    </div>
-  );
-}
 
 export function ComponentShowcase() {
   const [ready, setReady] = useState(false);
