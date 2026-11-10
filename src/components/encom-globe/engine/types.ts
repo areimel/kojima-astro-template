@@ -114,6 +114,8 @@ export type GridTile = [number, number, number, number, number];
 export interface GridFile {
   version: 1;
   divisions: number;
+  /** Mean hexasphere tile radius in world units (scales instanced tiles). */
+  tileRadius?: number;
   tiles: GridTile[];
 }
 
