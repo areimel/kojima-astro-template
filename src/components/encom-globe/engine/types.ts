@@ -69,6 +69,8 @@ export interface EngineContext {
   reducedMotion: boolean;
   /** Current engine time in ms (same clock as FrameContext.time). */
   now(): number;
+  /** Run `fn` once engine time passes now() + delayMs (engine-clock, pauses with the loop). */
+  schedule(delayMs: number, fn: () => void): void;
   /** Create a DOM label (CSS2D) at a world position, attached to `parent`. */
   addLabel(parent: Object3D, text: string, position: Vector3, className?: string): Label;
 }
