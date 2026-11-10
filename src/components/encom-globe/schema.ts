@@ -135,9 +135,6 @@ export interface ParseIssue {
   message: string;
 }
 
-let autoId = 0;
-const nextId = (prefix: string) => `${prefix}-${++autoId}`;
-
 function parseList<T extends { id?: string }>(
   items: unknown[],
   schema: z.ZodType<T>,
@@ -148,7 +145,8 @@ function parseList<T extends { id?: string }>(
   items.forEach((item, index) => {
     const result = schema.safeParse(item);
     if (result.success) {
-      out.push({ ...result.data, id: result.data.id ?? nextId(collection) });
+      // Index-based ids are deterministic, so server and client markup match.
+      out.push({ ...result.data, id: result.data.id ?? `${collection}-${index}` });
     } else {
       issues.push({ collection, index, message: z.prettifyError(result.error) });
     }
