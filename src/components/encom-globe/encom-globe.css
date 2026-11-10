@@ -1,0 +1,36 @@
+.encom-globe__label {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--encom-label, #fff);
+  /* Approximates the original's 6px stroke in the fog colour. */
+  text-shadow:
+    0 0 3px var(--encom-fog, #000),
+    0 0 3px var(--encom-fog, #000),
+    1px 1px 0 var(--encom-fog, #000),
+    -1px -1px 0 var(--encom-fog, #000),
+    1px -1px 0 var(--encom-fog, #000),
+    -1px 1px 0 var(--encom-fog, #000);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  max-width: 40ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.5s;
+}
+
+.encom-globe__label--marker {
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--encom-marker, #fc0);
+}
+
+.encom-globe__label--pin {
+  color: var(--encom-label, #fff);
+  text-shadow:
+    0 0 3px var(--encom-fog, #000),
+    1px 1px 0 var(--encom-fog, #000),
+    -1px -1px 0 var(--encom-fog, #000);
+  border-left: 2px solid var(--encom-pin, #0ee);
+  padding-left: 4px;
+}

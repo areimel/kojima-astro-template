@@ -1,0 +1,8 @@
+---
+import Sandbox from '@/components/encom-globe/dev/sandbox';
+import DefaultLayout from '@/layouts/DefaultLayout.astro';
+---
+
+<DefaultLayout title="Globe sandbox" description="Temporary EncomGlobe engine dev harness.">
+  <Sandbox client:only="react" />
+</DefaultLayout>
