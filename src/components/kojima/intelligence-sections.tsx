@@ -9,6 +9,7 @@ import {
 import { InstrumentGraphic } from "./instrument-graphic";
 
 import { Button } from "@/components/ui/button";
+import { anim } from "@/lib/animations/attributes";
 
 const capabilities = [
   {
@@ -55,7 +56,7 @@ export function IntelligenceSections() {
           <span className="registration-mark" aria-hidden="true" />
         </div>
         <div className="intel-section-heading">
-          <h2 id="platform-title">
+          <h2 id="platform-title" {...anim({ animation: "scan-wipe" })}>
             Less noise.
             <br />
             More intelligence.
@@ -66,7 +67,10 @@ export function IntelligenceSections() {
             One connected environment for seeing what comes next.
           </p>
         </div>
-        <div className="capability-grid">
+        <div
+          className="capability-grid"
+          {...anim({ animation: "boot-stagger", children: "article" })}
+        >
           {capabilities.map(({ number, icon: Icon, title, copy, detail }) => (
             <article key={number} className="capability-card">
               <div className="capability-marker">
@@ -94,7 +98,7 @@ export function IntelligenceSections() {
         </div>
         <div className="briefing-content">
           <p className="kicker">02 / THE ANALYST’S PERSPECTIVE</p>
-          <h2 id="briefing-title">
+          <h2 id="briefing-title" {...anim({ animation: "scan-wipe" })}>
             The world is connected.
             <br />
             Your intelligence
@@ -126,7 +130,7 @@ export function IntelligenceSections() {
           </h2>
         </div>
         <div>
-          <Button size="lg" asChild>
+          <Button size="lg" asChild {...anim({ animation: "glitch-hover" })}>
             <a href="/contact">
               Request a briefing <ArrowRight />
             </a>

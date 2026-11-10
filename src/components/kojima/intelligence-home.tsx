@@ -16,7 +16,7 @@ import { IntelligenceSections } from "./intelligence-sections";
 
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-
+import { anim } from "@/lib/animations/attributes";
 
 const instruments = [
   {
@@ -97,7 +97,7 @@ export function IntelligenceHome() {
     <div className="kojima-home">
       <section className="intel-intro" aria-labelledby="intro-title">
         <div className="intel-eyebrow">
-          <span>
+          <span {...anim({ animation: "typewriter" })}>
             <i aria-hidden="true" /> PRIVATE INTELLIGENCE / PUBLIC CLARITY
           </span>
           <span>
@@ -105,17 +105,20 @@ export function IntelligenceHome() {
           </span>
         </div>
         <div className="intel-heading-row">
-          <h1 id="intro-title">
+          <h1 id="intro-title" {...anim({ animation: "decode" })}>
             Read the world.
             <br />
             <span>Stay ahead of it.</span>
           </h1>
-          <div className="intel-intro-copy">
+          <div
+            className="intel-intro-copy"
+            {...anim({ animation: "fade-up", delay: 150 })}
+          >
             <p>
               A sharper operational picture for a world that won’t stand still.
               Intelligence for the decisions that matter.
             </p>
-            <Button asChild>
+            <Button asChild {...anim({ animation: "glitch-hover" })}>
               <a href="/contact">
                 Request access <ArrowUpRight />
               </a>
@@ -131,9 +134,14 @@ export function IntelligenceHome() {
         className="instrument-workspace"
         aria-label="Interactive intelligence instrument preview"
       >
-        <aside className="instrument-index">
+        <aside
+          className="instrument-index"
+          {...anim({ animation: "fade-up", delay: 150 })}
+        >
           <div className="intel-panel-label">
-            <span>INSTRUMENT INDEX</span>
+            <span {...anim({ animation: "typewriter", delay: 300 })}>
+              INSTRUMENT INDEX
+            </span>
             <span>03</span>
           </div>
           <div className="instrument-options">
@@ -173,7 +181,10 @@ export function IntelligenceHome() {
           </div>
         </aside>
 
-        <div className="instrument-stage">
+        <div
+          className="instrument-stage"
+          {...anim({ desktop: "glitch-in", mobile: "fade-up" })}
+        >
           <div className="intel-panel-label">
             <span>FIELD OF VIEW / {variant.toUpperCase()}</span>
             <span>
@@ -195,7 +206,11 @@ export function IntelligenceHome() {
           </div>
         </div>
 
-        <aside className="instrument-controls" aria-label="Instrument controls">
+        <aside
+          className="instrument-controls"
+          aria-label="Instrument controls"
+          {...anim({ animation: "fade-up", delay: 300 })}
+        >
           <div className="intel-control-panel">
             <div className="intel-panel-label">
               <span>01 / DISPLAY CONFIGURATION</span>
@@ -248,7 +263,11 @@ export function IntelligenceHome() {
           <div className="intel-control-panel">
             <div className="intel-panel-label">
               <span>02 / SIGNAL REGISTER</span>
-              <span className="signal-dot" aria-hidden="true" />
+              <span
+                className="signal-dot"
+                aria-hidden="true"
+                {...anim({ animation: "blink" })}
+              />
             </div>
             <div className="region-filter">
               <label htmlFor="signal-region">REGION</label>
@@ -262,7 +281,10 @@ export function IntelligenceHome() {
                 ))}
               </select>
             </div>
-            <ul className="signal-list">
+            <ul
+              className="signal-list"
+              {...anim({ animation: "boot-stagger", children: "li" })}
+            >
               {shownSignals.map((signal) => (
                 <li key={signal.region}>
                   <div>
