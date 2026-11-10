@@ -1,1 +1,49 @@
-/* Animation styles: reveal presets. */
+/* Animation styles: reveal presets (scan-wipe, redact). Motion is driven by
+   anime.js through the custom properties below; the classes only exist while
+   a preset runs and are removed on completion. */
+
+/* Scan-wipe: the scanline sits on the clip edge, so it needs a containing block. */
+.anim-scan {
+  position: relative;
+}
+
+.anim-scan::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--scan, 0%);
+  height: 2px;
+  /* Sits just above the clip edge so it stays visible while content is revealed. */
+  transform: translateY(-100%);
+  background: var(--primary);
+  box-shadow:
+    0 0 8px 1px color-mix(in srgb, var(--primary) 60%, transparent),
+    0 0 2px var(--primary);
+  pointer-events: none;
+}
+
+/* Redaction: an opaque bar that collapses toward the right edge. */
+.anim-redact {
+  position: relative;
+  /* Text stays hidden under the bar until its fade-in (relative colour syntax). */
+  color: rgb(from currentcolor r g b / var(--redact-text, 1));
+}
+
+.anim-redact::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--foreground);
+  transform: scaleX(var(--redact, 1));
+  transform-origin: right;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-scan::after,
+  .anim-redact::before {
+    display: none;
+  }
+}
