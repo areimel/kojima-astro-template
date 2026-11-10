@@ -1,0 +1,6 @@
+/* Animation system styles. Each partial belongs to one preset family. */
+@import "./animations/base.css";
+@import "./animations/text.css";
+@import "./animations/glitch.css";
+@import "./animations/reveal.css";
+@import "./animations/ambient.css";

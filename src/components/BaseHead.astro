@@ -37,11 +37,18 @@ const imageURL = new URL(image || "/og-image.png", siteURL);
       apply(saved);
     };
     restore();
+    // Must match READY_CLASS in src/lib/animations/config.ts.
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.documentElement.classList.add("anim-ready");
+    }
     document.addEventListener("astro:after-swap", restore);
     window.addEventListener("storage", (event) => {
       if (event.key === "theme" || event.key === null) restore();
     });
   })();
+</script>
+<script>
+  import "@/scripts/animations";
 </script>
 <link
   rel="preload"
