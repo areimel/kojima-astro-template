@@ -47,6 +47,7 @@ export function Footer() {
             ["Sign in", "/login"],
             ["Register", "/signup"],
             ["UI kit", "/components"],
+            ["Globe", "/globe-demo"],
           ].map(([label, href]) => (
             <a
               key={href}

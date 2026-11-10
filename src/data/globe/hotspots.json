@@ -1,0 +1,130 @@
+{
+  "pins": [
+    {
+      "id": "hotspot-hormuz",
+      "lat": 26.57,
+      "lng": 56.25,
+      "label": "STRAIT OF HORMUZ",
+      "color": "#ff4d00",
+      "altitude": 1.3,
+      "meta": { "level": "high", "summary": "Narrow transit corridor for a large share of seaborne crude. Shipping insurers and energy desks track transit volumes and escort arrangements." }
+    },
+    {
+      "id": "hotspot-taiwan-strait",
+      "lat": 24.50,
+      "lng": 119.50,
+      "label": "TAIWAN STRAIT",
+      "color": "#ff4d00",
+      "altitude": 1.3,
+      "meta": { "level": "high", "summary": "Key shipping lane between the East China Sea and the South China Sea. Semiconductor supply chains and regional naval patrol patterns are under active monitoring." }
+    },
+    {
+      "id": "hotspot-suez",
+      "lat": 30.46,
+      "lng": 32.35,
+      "label": "SUEZ CANAL",
+      "color": "#e0b341",
+      "altitude": 1.22,
+      "meta": { "level": "elevated", "summary": "Canal transit schedules and vessel rerouting around the Cape of Good Hope affect container freight rates and delivery windows." }
+    },
+    {
+      "id": "hotspot-sahel",
+      "lat": 14.50,
+      "lng": 2.00,
+      "label": "SAHEL",
+      "color": "#e0b341",
+      "altitude": 1.22,
+      "meta": { "level": "elevated", "summary": "Band of semi-arid states across West Africa. Cross-border mobility, public-sector capacity and mining concessions are tracked by regional analysts." }
+    },
+    {
+      "id": "hotspot-black-sea",
+      "lat": 43.40,
+      "lng": 34.00,
+      "label": "BLACK SEA",
+      "color": "#e0b341",
+      "altitude": 1.22,
+      "meta": { "level": "elevated", "summary": "Grain and fertilizer export routes depend on port access and maritime insurance. Coastal shipping advisories are reviewed weekly." }
+    },
+    {
+      "id": "hotspot-panama-canal",
+      "lat": 9.08,
+      "lng": -79.68,
+      "label": "PANAMA CANAL",
+      "color": "#8FD8D8",
+      "altitude": 1.16,
+      "meta": { "level": "watch", "summary": "Lock capacity and seasonal water levels set daily transit limits. Container and LNG operators monitor draft restrictions and booking queues." }
+    },
+    {
+      "id": "hotspot-malacca",
+      "lat": 2.50,
+      "lng": 101.50,
+      "label": "MALACCA STRAIT",
+      "color": "#8FD8D8",
+      "altitude": 1.16,
+      "meta": { "level": "watch", "summary": "One of the busiest shipping lanes by tonnage. Traffic separation schemes and port congestion at Singapore are tracked for throughput changes." }
+    },
+    {
+      "id": "hotspot-bab-el-mandeb",
+      "lat": 12.58,
+      "lng": 43.33,
+      "label": "BAB-EL-MANDEB",
+      "color": "#ff4d00",
+      "altitude": 1.3,
+      "meta": { "level": "high", "summary": "Southern gateway to the Red Sea. Vessel routing decisions here shape transit times between Asia and Europe and related war-risk premiums." }
+    },
+    {
+      "id": "hotspot-red-sea",
+      "lat": 20.00,
+      "lng": 38.50,
+      "label": "RED SEA",
+      "color": "#e0b341",
+      "altitude": 1.22,
+      "meta": { "level": "elevated", "summary": "Route of the Suez corridor and a major petroleum and container lane. Port calls, convoy schedules and charter rates are reviewed daily." }
+    },
+    {
+      "id": "hotspot-south-china-sea",
+      "lat": 12.00,
+      "lng": 114.00,
+      "label": "SOUTH CHINA SEA",
+      "color": "#e0b341",
+      "altitude": 1.22,
+      "meta": { "level": "elevated", "summary": "Overlapping maritime claims and heavy fishing and commercial traffic. Fisheries enforcement and offshore energy licensing are logged by regional desks." }
+    },
+    {
+      "id": "hotspot-korean-dmz",
+      "lat": 37.95,
+      "lng": 126.68,
+      "label": "KOREAN DMZ",
+      "color": "#8FD8D8",
+      "altitude": 1.16,
+      "meta": { "level": "watch", "summary": "Demilitarized zone with routine military activity and periodic exercises. Logistics firms track border crossing and industrial zone operating status." }
+    },
+    {
+      "id": "hotspot-horn-of-africa",
+      "lat": 8.00,
+      "lng": 46.00,
+      "label": "HORN OF AFRICA",
+      "color": "#e0b341",
+      "altitude": 1.22,
+      "meta": { "level": "elevated", "summary": "Coastal shipping, port development and regional humanitarian logistics. Maritime security cooperation and fuel supply corridors are monitored." }
+    },
+    {
+      "id": "hotspot-baltic",
+      "lat": 58.50,
+      "lng": 20.00,
+      "label": "BALTIC SEA",
+      "color": "#8FD8D8",
+      "altitude": 1.16,
+      "meta": { "level": "watch", "summary": "Dense short-sea and energy cable traffic. Subsea infrastructure inspections and port-state control activity are tracked for schedule impacts." }
+    },
+    {
+      "id": "hotspot-gulf-of-guinea",
+      "lat": 3.50,
+      "lng": 5.00,
+      "label": "GULF OF GUINEA",
+      "color": "#8FD8D8",
+      "altitude": 1.16,
+      "meta": { "level": "watch", "summary": "Offshore oil and gas hub with dense port traffic. Vessel boarding reports and terminal throughput data are reviewed monthly." }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "viewAngle": 0.1,
+  "dayLength": 36000,
+  "layers": {
+    "atmosphere": false
+  }
+}

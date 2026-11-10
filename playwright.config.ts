@@ -10,7 +10,15 @@ export default defineConfig({
     viewport: { width: 1440, height: 1000 },
     channel: process.env.PLAYWRIGHT_CHANNEL || (process.platform === "win32" ? "msedge" : undefined),
     trace: "retain-on-failure",
+    // Software WebGL for the EncomGlobe canvas in headless runs.
+    launchOptions: { args: ["--enable-unsafe-swiftshader", "--use-angle=swiftshader"] },
   },
+  // Software-WebGL globe tests are CPU heavy; run them after the timing-sensitive site suite
+  // so they can't starve its animation waits.
+  projects: [
+    { name: "site", testIgnore: /globe\.spec\.ts/ },
+    { name: "globe", testMatch: /globe\.spec\.ts/, dependencies: ["site"] },
+  ],
   webServer: {
     command: "pnpm run build && pnpm run preview --ignore-lock --host 127.0.0.1 --port 4322",
     url: "http://127.0.0.1:4322",

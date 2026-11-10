@@ -1,0 +1,24 @@
+{
+  "satellites": [
+    { "id": "kj-sat-01", "label": "KJ-SAT 01", "lat": 52.10, "lng": -38.40, "altitude": 1.34, "numWaves": 4 },
+    { "id": "kj-sat-02", "label": "KJ-SAT 02", "lat": -18.70, "lng": 24.90, "altitude": 1.41 },
+    { "id": "kj-sat-03", "label": "KJ-SAT 03", "lat": 12.30, "lng": 88.60, "altitude": 1.37, "numWaves": 6 },
+    { "id": "kj-sat-04", "label": "KJ-SAT 04", "lat": -44.20, "lng": -121.50, "altitude": 1.30 },
+    { "id": "kj-sat-05", "label": "KJ-SAT 05", "lat": 33.90, "lng": 150.20, "altitude": 1.44, "numWaves": 8 },
+    { "id": "kj-sat-06", "label": "KJ-SAT 06", "lat": -6.40, "lng": -66.10, "altitude": 1.36, "numWaves": 5 }
+  ],
+  "constellations": [
+    {
+      "id": "kj-relay",
+      "label": "KJ-RELAY",
+      "numWaves": 4,
+      "satellites": [
+        { "lat": 27.50, "lng": -150.00, "altitude": 1.35 },
+        { "lat": 28.50, "lng": -78.00, "altitude": 1.35 },
+        { "lat": 27.00, "lng": -6.00, "altitude": 1.35 },
+        { "lat": 29.00, "lng": 66.00, "altitude": 1.35 },
+        { "lat": 28.00, "lng": 138.00, "altitude": 1.35 }
+      ]
+    }
+  ]
+}

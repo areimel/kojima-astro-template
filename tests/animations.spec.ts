@@ -31,6 +31,9 @@ async function scrollThrough(page: Page) {
   await page.evaluate(async () => {
     for (let y = 0; y < document.body.scrollHeight; y += 400) {
       window.scrollTo(0, y);
+      // Wait for rendered frames, not wall time: IntersectionObserver delivers after a frame,
+      // and under CPU load (e.g. software WebGL in parallel tests) 60ms may elapse first.
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       await new Promise((r) => setTimeout(r, 60));
     }
     window.scrollTo(0, document.body.scrollHeight);
@@ -82,6 +85,15 @@ test.describe("animation lab at desktop", () => {
     }
     await scrollThrough(page); // also reaches page-bottom content outside the lab
     await settle(page);
+    // Text presets wait for React hydration; under CPU load that can finish after the scroll
+    // pass went by, leaving them armed until seen again. Bring stragglers back into view (DOM
+    // scroll: they are pre-hidden, which Playwright's visibility-gated scrolling would wait on)
+    // so every target must still animate once it is seen.
+    // (Re-query each pass: positional locators go stale as targets stop being pending.)
+    for (let pass = 0; pass < total && (await pendingCount(page)) > 0; pass++) {
+      await page.locator("[data-anim-pending]").first().evaluate((node) => node.scrollIntoView({ block: "center" }));
+      await settle(page);
+    }
     expect(await pendingCount(page)).toBe(0);
 
     for (let i = 0; i < total; i++) {
@@ -198,7 +210,7 @@ test("no console errors or warnings across key pages", async ({ page }) => {
   const problems: string[] = [];
   page.on("console", (m) => ["error", "warning"].includes(m.type()) && problems.push(`${m.type()}: ${m.text()}`));
   page.on("pageerror", (e) => problems.push(`pageerror: ${e.message}`));
-  for (const path of ["/", "/about", "/pricing", "/components"]) {
+  for (const path of ["/", "/about", "/pricing", "/components", "/globe-demo"]) {
     await open(page, path);
     await scrollThrough(page);
     await page.waitForTimeout(1200);
